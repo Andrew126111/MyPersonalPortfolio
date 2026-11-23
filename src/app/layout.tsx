@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { site } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -20,7 +21,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Andrew Nguyen — AI Product Engineer",
+  title: `${site.name} — ${site.role}`,
   description:
     "Computing (AI) student at Queen's University building full-stack AI products.",
 };

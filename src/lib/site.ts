@@ -2,6 +2,7 @@
 export const site = {
   name: "Andrew Nguyen",
   handle: "andrew.n",
+  // Shown in the browser tab title and link previews. Change here only.
   role: "AI Product Engineer",
   school: "Queen's University",
   links: {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   motion,
   useMotionValue,
@@ -11,6 +11,7 @@ import {
   type MotionValue,
 } from "motion/react";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { DotField, type DotFieldVariant } from "@/components/dot-field";
 import { GitHubIcon, LinkedInIcon } from "@/components/icons";
 import { TextScramble } from "@/components/text-scramble";
 import { site } from "@/lib/site";
@@ -58,6 +59,7 @@ function Chip({
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
+  const [cursor, setCursor] = useState<DotFieldVariant>("spotlight");
 
   // Scroll parallax: background drifts slower than the page, content lifts and fades out.
   const { scrollYProgress } = useScroll({
@@ -97,11 +99,21 @@ export function Hero() {
     >
       {/* Layer 1: dot grid (slowest) */}
       <motion.div aria-hidden="true" style={{ y: bgY }} className="absolute -inset-16">
-        <motion.div
-          style={{ x: grid.x, y: grid.y }}
-          className="h-full w-full [background-image:radial-gradient(var(--subtle)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_45%,black_30%,transparent_100%)] opacity-60"
-        />
+        <motion.div style={{ x: grid.x, y: grid.y }} className="h-full w-full">
+          <DotField variant={cursor} />
+        </motion.div>
       </motion.div>
+
+      {/* Dev-only switch for comparing cursor effects. Remove once one is chosen. */}
+      {process.env.NODE_ENV === "development" && (
+        <button
+          type="button"
+          onClick={() => setCursor((c) => (c === "spotlight" ? "repel" : "spotlight"))}
+          className="fixed right-4 bottom-4 z-50 rounded-full border border-border bg-surface px-4 py-2 font-mono text-xs text-muted-foreground hover:text-foreground"
+        >
+          cursor: <span className="text-lime">{cursor}</span> (click to switch)
+        </button>
+      )}
 
       {/* Layer 2: floating stack chips */}
       <motion.div aria-hidden="true" style={{ y: chipsY }} className="absolute inset-0">
@@ -121,7 +133,7 @@ export function Hero() {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="font-mono text-xs uppercase tracking-[0.12em] text-lime"
         >
-          AI student · {site.school} &apos;28
+          Computing student · {site.school} &apos;28
         </motion.p>
 
         <motion.h1
