@@ -25,6 +25,11 @@ export function TextScramble({ text, className, speed = 32 }: Props) {
 
   const run = useCallback(() => {
     if (reduce || frame.current) return;
+    // Background tabs pause animation frames; don't leave the headline half-scrambled.
+    if (document.hidden) {
+      setDisplay(text);
+      return;
+    }
     let tick = 0;
     let last = 0;
     const step = (t: number) => {

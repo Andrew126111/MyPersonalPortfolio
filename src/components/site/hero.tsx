@@ -11,7 +11,11 @@ import {
   type MotionValue,
 } from "motion/react";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import { DotField, type DotFieldVariant } from "@/components/dot-field";
+import {
+  HERO_BACKGROUNDS,
+  HeroBackground,
+  type HeroBackgroundName,
+} from "@/components/backgrounds";
 import { GitHubIcon, LinkedInIcon } from "@/components/icons";
 import { TextScramble } from "@/components/text-scramble";
 import { site } from "@/lib/site";
@@ -59,7 +63,7 @@ function Chip({
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
-  const [cursor, setCursor] = useState<DotFieldVariant>("spotlight");
+  const [bg, setBg] = useState<HeroBackgroundName>("spotlight");
 
   // Scroll parallax: background drifts slower than the page, content lifts and fades out.
   const { scrollYProgress } = useScroll({
@@ -100,19 +104,28 @@ export function Hero() {
       {/* Layer 1: dot grid (slowest) */}
       <motion.div aria-hidden="true" style={{ y: bgY }} className="absolute -inset-16">
         <motion.div style={{ x: grid.x, y: grid.y }} className="h-full w-full">
-          <DotField variant={cursor} />
+          <HeroBackground name={bg} />
         </motion.div>
       </motion.div>
 
-      {/* Dev-only switch for comparing cursor effects. Remove once one is chosen. */}
+      {/* Dev-only switch for comparing backgrounds. Remove once one is chosen. */}
       {process.env.NODE_ENV === "development" && (
-        <button
-          type="button"
-          onClick={() => setCursor((c) => (c === "spotlight" ? "repel" : "spotlight"))}
-          className="fixed right-4 bottom-4 z-50 rounded-full border border-border bg-surface px-4 py-2 font-mono text-xs text-muted-foreground hover:text-foreground"
-        >
-          cursor: <span className="text-lime">{cursor}</span> (click to switch)
-        </button>
+        <div className="fixed right-4 bottom-4 z-50 flex gap-1 rounded-full border border-border bg-surface p-1 font-mono text-xs">
+          {HERO_BACKGROUNDS.map((name) => (
+            <button
+              key={name}
+              type="button"
+              onClick={() => setBg(name)}
+              className={
+                name === bg
+                  ? "rounded-full bg-lime px-3 py-1.5 text-ink"
+                  : "rounded-full px-3 py-1.5 text-muted-foreground hover:text-foreground"
+              }
+            >
+              {name}
+            </button>
+          ))}
+        </div>
       )}
 
       {/* Layer 2: floating stack chips */}
