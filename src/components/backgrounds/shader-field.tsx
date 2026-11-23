@@ -89,12 +89,58 @@ void main() {
 }
 `;
 
+/**
+ * Pool caustics: the bright, shifting web of light on the floor of a swimming pool.
+ * Built from the edges of two animated Voronoi layers, gently warped by noise.
+ * The cursor acts like a lens: it magnifies the pattern and tints it lime.
+ */
+const CAUSTICS = /* glsl */ `
+vec2 hash2(vec2 p) {
+  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+  return fract(sin(p) * 43758.5453);
+}
+// distance between nearest and 2nd-nearest cell points: ~0 on cell edges
+float cellEdge(vec2 p, float t) {
+  vec2 i = floor(p), f = fract(p);
+  float f1 = 8.0, f2 = 8.0;
+  for (int y = -1; y <= 1; y++)
+  for (int x = -1; x <= 1; x++) {
+    vec2 g = vec2(float(x), float(y));
+    vec2 o = 0.5 + 0.5 * sin(t + 6.2831 * hash2(i + g));
+    vec2 r = g + o - f;
+    float d = dot(r, r);
+    if (d < f1) { f2 = f1; f1 = d; } else if (d < f2) { f2 = d; }
+  }
+  return sqrt(f2) - sqrt(f1);
+}
+void main() {
+  vec2 uv = gl_FragCoord.xy / u_res.y;
+  vec2 m  = u_mouse / u_res.y;
+  float d = distance(uv, m);
+  float t = u_time;
+
+  float lens = u_hover * exp(-d * d * 18.0);
+  vec2 p = m + (uv - m) * (1.0 - 0.4 * lens);
+
+  // Strong, slow warping bends the cell edges into wavy, organic light lines.
+  vec2 warp = vec2(fbm(p * 1.2 + t * 0.04), fbm(p * 1.2 + 3.7 - t * 0.04));
+  vec2 w = p * 4.5 + 1.1 * warp;
+  float l1 = 1.0 - smoothstep(0.0, 0.11, cellEdge(w, t * 0.4));
+  float l2 = 1.0 - smoothstep(0.0, 0.09, cellEdge(w * 1.45 + 4.0 + 0.6 * warp, t * 0.55));
+  // Where the two layers cross, light "focuses" and gets brighter, like real caustics.
+  float c = 0.35 * l1 * l1 + 0.25 * l2 * l2 + 0.9 * l1 * l2;
+
+  vec3 tint = mix(vec3(0.12, 0.125, 0.135), LIME * 0.8, smoothstep(0.0, 0.7, lens));
+  outColor = vec4(BG + c * tint, 1.0);
+}
+`;
+
 const VERT = /* glsl */ `#version 300 es
 in vec2 a_pos;
 void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }
 `;
 
-export const SHADERS = { ink: INK, topo: TOPO } as const;
+export const SHADERS = { ink: INK, topo: TOPO, caustics: CAUSTICS } as const;
 export type ShaderName = keyof typeof SHADERS;
 
 function compile(gl: WebGL2RenderingContext, type: number, src: string) {

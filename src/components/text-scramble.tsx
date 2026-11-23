@@ -68,9 +68,10 @@ export function TextScramble({ text, className, speed = 32 }: Props) {
   const shownWords = display.split(" ");
 
   return (
-    <span className={className} onMouseEnter={run}>
+    <span className={className}>
       <span className="sr-only">{text}</span>
-      <span aria-hidden="true">
+      {/* hover target is the inline text itself, not the full-width line */}
+      <span aria-hidden="true" onMouseEnter={run}>
         {realWords.map((word, i) => (
           <Fragment key={i}>
             <span className="relative inline-block whitespace-nowrap">
