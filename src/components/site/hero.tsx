@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import {
   motion,
   useMotionValue,
@@ -11,11 +11,7 @@ import {
   type MotionValue,
 } from "motion/react";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import {
-  HERO_BACKGROUNDS,
-  HeroBackground,
-  type HeroBackgroundName,
-} from "@/components/backgrounds";
+import { Caustics } from "@/components/backgrounds/caustics";
 import { GitHubIcon, LinkedInIcon } from "@/components/icons";
 import { TextScramble } from "@/components/text-scramble";
 import { site } from "@/lib/site";
@@ -63,7 +59,6 @@ function Chip({
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
-  const [bg, setBg] = useState<HeroBackgroundName>("spotlight");
 
   // Scroll parallax: background drifts slower than the page, content lifts and fades out.
   const { scrollYProgress } = useScroll({
@@ -101,32 +96,12 @@ export function Hero() {
       onPointerLeave={onPointerLeave}
       className="relative flex min-h-svh items-center overflow-hidden"
     >
-      {/* Layer 1: dot grid (slowest) */}
+      {/* Layer 1: caustics light (slowest) */}
       <motion.div aria-hidden="true" style={{ y: bgY }} className="absolute -inset-16">
         <motion.div style={{ x: grid.x, y: grid.y }} className="h-full w-full">
-          <HeroBackground name={bg} />
+          <Caustics />
         </motion.div>
       </motion.div>
-
-      {/* Dev-only switch for comparing backgrounds. Remove once one is chosen. */}
-      {process.env.NODE_ENV === "development" && (
-        <div className="fixed right-4 bottom-4 z-50 flex gap-1 rounded-full border border-border bg-surface p-1 font-mono text-xs">
-          {HERO_BACKGROUNDS.map((name) => (
-            <button
-              key={name}
-              type="button"
-              onClick={() => setBg(name)}
-              className={
-                name === bg
-                  ? "rounded-full bg-lime px-3 py-1.5 text-ink"
-                  : "rounded-full px-3 py-1.5 text-muted-foreground hover:text-foreground"
-              }
-            >
-              {name}
-            </button>
-          ))}
-        </div>
-      )}
 
       {/* Layer 2: floating stack chips */}
       <motion.div aria-hidden="true" style={{ y: chipsY }} className="absolute inset-0">
@@ -146,7 +121,8 @@ export function Hero() {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="font-mono text-xs uppercase tracking-[0.12em] text-lime"
         >
-          Computing student · {site.school} &apos;28
+          {/* "University" drops on phones so the line doesn't wrap */}
+          Computing student · Queen&apos;s<span className="hidden sm:inline"> University</span> &apos;28
         </motion.p>
 
         <motion.h1

@@ -54,10 +54,11 @@ Built with **Framer Motion** (`useScroll` / `useTransform`) so all motion shares
 - **Hovers:** 150–250ms. Lift cards 2–4px, brighten border to `--muted`, no big scale jumps.
 - **`prefers-reduced-motion: reduce`** → disable parallax and reveals entirely; render final state immediately. Non-negotiable.
 - Animate only `transform` and `opacity` (keeps it 60fps).
+- **Canvas/WebGL effects** pause when off-screen or in a hidden tab, cap pixel density (1.5x desktop, 1x phones), drop to 30fps on phones/touch, and render one still frame under reduced motion.
 
 ## Section map (draft)
 
-1. **Hero** — dot-grid background (parallax), name + one-line pitch, lime CTA. Interactive: pointer parallax + text scramble on the headline.
+1. **Hero** — "caustics" background: soft grey pool-floor light (WebGL shader, `components/backgrounds/caustics.tsx`); the cursor acts as a lens that magnifies it and tints it lime. Plus scroll + pointer parallax, floating stack chips (lg+), text-scramble headline, lime CTA.
 2. **About / skills** — bento grid: Queen's AI, current focus, stack icons.
 3. **Experience** — CoTriplyy, Wayfair (via Extern). Timeline with scroll reveal.
 4. **Projects** — Façade, HeuristX. Interactive cards (flip or tilt) with stack on the back.
