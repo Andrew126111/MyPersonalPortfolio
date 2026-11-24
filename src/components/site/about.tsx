@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, GraduationCap, MapPin, Sparkles, Wrench } from "lucide-react";
 import { LifeGallery } from "@/components/site/life-gallery";
-import { SectionHeading } from "@/components/site/section-heading";
 import { cn } from "@/lib/utils";
 
 /* ───────────────────────── content ───────────────────────── */
@@ -123,21 +122,8 @@ export function About() {
   }
 
   return (
-    <section id="about" aria-labelledby="about-title" className="scroll-mt-16 py-20 sm:py-32">
-      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6">
-        <SectionHeading
-          id="about-title"
-          eyebrow="01 · About"
-          title={
-            <>
-              Hi, I&apos;m Andrew.{" "}
-              <span className="text-muted-foreground">Here&apos;s a bit of life outside the code.</span>
-            </>
-          }
-        />
-      </div>
-
-      {/* Full-width photo gallery */}
+    <section id="about" aria-labelledby="about-title" className="pb-20 sm:pb-32">
+      {/* Tunnel fly-through → photo circle → arc. Its title is this section's heading. */}
       <LifeGallery />
 
       {/* The basics */}

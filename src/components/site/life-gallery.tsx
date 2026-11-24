@@ -5,23 +5,25 @@ import { useEffect, useRef, useState } from "react";
 import {
   AnimatePresence,
   motion,
-  useInView,
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
 } from "motion/react";
+import { TunnelLayer } from "@/components/site/about-tunnel";
 import { LIFE, type LifePhoto } from "@/content/life";
 import { cn } from "@/lib/utils";
 
 /*
- * "Life outside the terminal" photo gallery, adapted from 21st.dev's scroll-morph-hero.
+ * About section photo sequence: a 3D tunnel (21st.dev's perspective-tunnel-hero) that
+ * hands off to a photo arc (21st.dev's scroll-morph-hero), all on one pinned stage.
  *
  * Sequence:
- *   1. When the section scrolls into view, photos fly in from a scatter, line up, then form a circle.
- *   2. Scrolling morphs the circle into a big arc across the screen.
- *   3. Further scrolling slides photos along the arc; the photo at the top is "active" and its
+ *   1. Tunnel: "HI, I'M ANDREW." with your photos flying toward you out of the distance.
+ *   2. As the tunnel fades out, the photos line up, then form a circle.
+ *   3. Scrolling morphs the circle into a big arc across the screen.
+ *   4. Further scrolling slides photos along the arc; the photo at the top is "active" and its
  *      caption shows below it. Clicking any photo scrolls straight to it.
  *
  * Unlike the original, this never hijacks the mouse wheel: a tall wrapper with a sticky
@@ -31,10 +33,16 @@ import { cn } from "@/lib/utils";
 
 const N = LIFE.length;
 
-// Scroll budget: which part of the section's scroll range drives each step.
+// Scroll budget. MORPH and TRAVEL are fractions of the *arc* part of the scroll.
 const MORPH = [0.04, 0.24] as const; // circle → arc
 const TRAVEL = [0.3, 0.94] as const; // slide through photos
 const VH_PER_PHOTO = 22; // scroll distance per photo, in svh
+const ARC_SCROLL = ((N - 1) * VH_PER_PHOTO) / (TRAVEL[1] - TRAVEL[0]); // svh
+const TUNNEL_SCROLL = 170; // svh of scrolling to fly through the tunnel
+const T = TUNNEL_SCROLL / (TUNNEL_SCROLL + ARC_SCROLL); // tunnel's share of total progress
+// Tunnel progress at which the photos start forming the circle (and below which they reset).
+const CIRCLE_IN = 0.86;
+const CIRCLE_OUT = 0.7;
 
 type Phase = "scatter" | "line" | "circle";
 type Target = { x: number; y: number; rotate: number; scale: number; opacity: number };
@@ -70,26 +78,48 @@ function LifeArc() {
     return () => ro.disconnect();
   }, []);
 
-  // Intro: scatter → line → circle, once, when the stage is mostly on screen.
-  const inView = useInView(stageRef, { once: true, amount: 0.5 });
-  const [phase, setPhase] = useState<Phase>("scatter");
-  useEffect(() => {
-    if (!inView) return;
-    const t1 = setTimeout(() => setPhase("line"), 120);
-    const t2 = setTimeout(() => setPhase("circle"), 1100);
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
-  }, [inView]);
-
-  // Page scroll through the tall wrapper → morph and travel progress (springy for smoothness).
+  // Page scroll through the tall wrapper, split into the tunnel part and the arc part.
   const { scrollYProgress } = useScroll({ target: wrapRef, offset: ["start start", "end end"] });
-  const morphS = useSpring(useTransform(scrollYProgress, [...MORPH], [0, 1]), {
+  const tunnelRaw = useTransform(scrollYProgress, [0, T], [0, 1]);
+  const tunnelS = useSpring(tunnelRaw, { stiffness: 80, damping: 30, restDelta: 0.0001 });
+  const arcP = useTransform(scrollYProgress, [T, 1], [0, 1]);
+
+  // Intro: photos go scatter → line → circle when the tunnel nears its end,
+  // and reset if you scroll back up into the tunnel.
+  const [phase, setPhase] = useState<Phase>("scatter");
+  const phaseRef = useRef<Phase>("scatter");
+  const timer = useRef<number | undefined>(undefined);
+  const syncPhase = (v: number) => {
+    if (v > CIRCLE_IN && phaseRef.current === "scatter") {
+      phaseRef.current = "line";
+      setPhase("line");
+      timer.current = window.setTimeout(() => {
+        phaseRef.current = "circle";
+        setPhase("circle");
+      }, 650);
+    } else if (v < CIRCLE_OUT && phaseRef.current !== "scatter") {
+      window.clearTimeout(timer.current);
+      phaseRef.current = "scatter";
+      setPhase("scatter");
+    }
+  };
+  useMotionValueEvent(tunnelRaw, "change", syncPhase);
+  useEffect(() => {
+    // Landing mid-page (reload, anchor link) doesn't fire a change event, so sync once.
+    const id = window.setTimeout(() => syncPhase(tunnelRaw.get()), 0);
+    return () => {
+      window.clearTimeout(id);
+      window.clearTimeout(timer.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Arc progress (springy for smoothness).
+  const morphS = useSpring(useTransform(arcP, [...MORPH], [0, 1]), {
     stiffness: 70,
     damping: 22,
   });
-  const travelS = useSpring(useTransform(scrollYProgress, [...TRAVEL], [0, 1]), {
+  const travelS = useSpring(useTransform(arcP, [...TRAVEL], [0, 1]), {
     stiffness: 70,
     damping: 24,
   });
@@ -168,7 +198,8 @@ function LifeArc() {
     if (!el) return;
     const top = el.getBoundingClientRect().top + window.scrollY;
     const scrollable = el.offsetHeight - window.innerHeight;
-    const p = TRAVEL[0] + (TRAVEL[1] - TRAVEL[0]) * (N > 1 ? i / (N - 1) : 0);
+    const arc = TRAVEL[0] + (TRAVEL[1] - TRAVEL[0]) * (N > 1 ? i / (N - 1) : 0);
+    const p = T + (1 - T) * arc; // arc progress → overall progress (after the tunnel)
     window.scrollTo({ top: top + p * scrollable, behavior: "smooth" });
   }
 
@@ -179,9 +210,12 @@ function LifeArc() {
     <div
       ref={wrapRef}
       className="relative"
-      style={{ height: `calc(100svh + ${Math.round(((N - 1) * VH_PER_PHOTO) / (TRAVEL[1] - TRAVEL[0]))}svh)` }}
+      style={{ height: `calc(100svh + ${Math.round(TUNNEL_SCROLL + ARC_SCROLL)}svh)` }}
     >
       <div ref={stageRef} className="sticky top-0 h-svh overflow-hidden">
+        {/* 1. tunnel fly-through (fades out as the circle forms) */}
+        <TunnelLayer progress={tunnelS} stage={size} photos={LIFE} />
+
         {/* centre text while photos form a circle */}
         <div
           className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center transition-opacity duration-500"
@@ -215,6 +249,7 @@ function LifeArc() {
                 transition={{ type: "spring", stiffness: 80, damping: 18, mass: 0.7 }}
                 className={cn(
                   "absolute top-1/2 left-1/2 overflow-hidden rounded-xl border bg-surface",
+                  hidden && "pointer-events-none",
                   "shadow-[0_24px_48px_-24px_rgb(0_0_0/0.9)] transition-[border-color,box-shadow] duration-300",
                   isActive
                     ? "border-lime shadow-[0_0_0_1px_var(--lime),0_24px_60px_-20px_rgb(200_245_96/0.35)]"
@@ -281,7 +316,19 @@ function LifeArc() {
 
 function LifeGrid() {
   return (
-    <div className="mx-auto grid max-w-[1200px] grid-cols-2 gap-4 px-4 sm:grid-cols-3 sm:px-6 lg:grid-cols-4">
+    <div className="mx-auto max-w-[1200px] px-4 pt-20 sm:px-6 sm:pt-32">
+      <p className="font-mono text-xs tracking-[0.12em] text-lime uppercase">01 · About</p>
+      <h2 id="about-title" className="mt-3 mb-10 text-3xl font-bold sm:text-[44px]">
+        Hi, I&apos;m Andrew. <span className="text-muted-foreground">Life outside the terminal.</span>
+      </h2>
+      <LifeGridPhotos />
+    </div>
+  );
+}
+
+function LifeGridPhotos() {
+  return (
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
       {LIFE.map((photo: LifePhoto) => (
         <figure key={photo.src}>
           <div className="relative aspect-[3/4] overflow-hidden rounded-xl border border-border">
