@@ -42,9 +42,10 @@ type Target = { x: number; y: number; rotate: number; scale: number; opacity: nu
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 // Deterministic pseudo-random so server and client agree (no hydration mismatch).
+// Rounded because Math.sin can differ in the last digits between Node and browsers.
 const rand = (i: number, k: number) => {
   const s = Math.sin(i * 127.1 + k * 311.7) * 43758.5453;
-  return s - Math.floor(s);
+  return Math.round((s - Math.floor(s)) * 1000) / 1000;
 };
 
 export function LifeGallery() {
