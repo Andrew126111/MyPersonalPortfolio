@@ -1,94 +1,61 @@
 "use client";
 
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { Cloud } from "@/components/clouds/cloud";
 
 /*
- * Animated twilight cloud sky behind the About section.
+ * Animated cloud sky behind the About section.
  *
- * Three layers of soft clouds (far, mid, near) drift slowly sideways at different speeds,
- * and move at different speeds when you scroll (parallax: near clouds move most).
+ * Three layers of clouds (far, mid, near) drift slowly sideways at different speeds and
+ * move at different speeds when you scroll (parallax: near clouds move most). Uses the same
+ * cloud images and theme colours (--sky-*, --cloud-*) as the hero's cloud bank, so the
+ * hand-off between them is seamless.
  *
- * The sky is a fixed layer behind the page:
- *   - On the home screen it sits low and dimmed, so you only glimpse it around the hero's
- *     video frame (more as the frame shrinks when you start scrolling).
- *   - As the About section scrolls in, the clouds rise into place at full strength and
- *     become its background.
- *   - It fades out as the About section ends.
- *
- * Each cloud is a soft blob roughed up with an SVG turbulence filter for fluffy edges.
- * Layers move with transforms only, so the browser doesn't redraw the filters while animating.
+ * It's a fixed layer behind the page: hidden behind the full-bleed hero at first, it becomes
+ * About's background as you scroll in, and fades out as About ends.
  */
 
-type Cloud = { x: number; y: number; w: number; h: number }; // x/w in vw, y/h in vh
+type C = { s: number; w: number; x: number; y: number; flip?: boolean; o?: number };
+// x/w in vw (within one 100vw copy), y = top edge in vh
 
-const LAYERS = [
+const LAYERS: { id: string; rise: number; drift: number; duration: number; clouds: C[] }[] = [
   {
     id: "far",
-    rise: 18, // vh the layer rises while the About section scrolls in
-    drift: 14, // vh of slow parallax drift across the whole About section
-    duration: 240, // seconds for one full sideways loop
-    color: "rgb(170 140 200 / 0.55)",
-    highlight: "rgb(220 190 230 / 0.5)",
+    rise: 18, // vh the layer rises while About scrolls in
+    drift: 14, // vh of slow parallax drift across the whole section
+    duration: 260, // seconds for one full sideways loop
     clouds: [
-      { x: 2, y: 12, w: 26, h: 9 },
-      { x: 22, y: 26, w: 18, h: 7 },
-      { x: 42, y: 7, w: 30, h: 10 },
-      { x: 66, y: 22, w: 22, h: 8 },
-      { x: 82, y: 10, w: 26, h: 9 },
+      { s: 3, w: 24, x: 2, y: 8, o: 0.55 },
+      { s: 1, w: 18, x: 30, y: 20, flip: true, o: 0.45 },
+      { s: 5, w: 22, x: 55, y: 5, o: 0.5 },
+      { s: 2, w: 20, x: 80, y: 16, flip: true, o: 0.45 },
     ],
   },
   {
     id: "mid",
     rise: 34,
     drift: 26,
-    duration: 160,
-    color: "rgb(214 170 205 / 0.72)",
-    highlight: "rgb(248 214 226 / 0.7)",
+    duration: 170,
     clouds: [
-      { x: -6, y: 38, w: 40, h: 16 },
-      { x: 26, y: 52, w: 30, h: 13 },
-      { x: 52, y: 40, w: 24, h: 11 },
-      { x: 72, y: 50, w: 40, h: 17 },
+      { s: 0, w: 34, x: -6, y: 36, o: 0.85 },
+      { s: 4, w: 28, x: 34, y: 48, flip: true, o: 0.8 },
+      { s: 2, w: 32, x: 68, y: 38, o: 0.85 },
     ],
   },
   {
     id: "near",
     rise: 55,
     drift: 42,
-    duration: 110,
-    color: "rgb(240 200 214 / 0.86)",
-    highlight: "rgb(255 236 232 / 0.9)",
-    // overlapping puffs along the bottom form a continuous "sea of clouds"
+    duration: 120,
+    // overlapping clouds along the bottom form a continuous "sea of clouds"
     clouds: [
-      { x: -14, y: 80, w: 44, h: 30 },
-      { x: 12, y: 84, w: 40, h: 26 },
-      { x: 34, y: 78, w: 46, h: 32 },
-      { x: 60, y: 85, w: 40, h: 26 },
-      { x: 80, y: 79, w: 44, h: 30 },
-      { x: 4, y: 64, w: 26, h: 16 },
-      { x: 66, y: 66, w: 24, h: 14 },
+      { s: 5, w: 52, x: -16, y: 70 },
+      { s: 1, w: 46, x: 18, y: 76, flip: true },
+      { s: 3, w: 52, x: 46, y: 70 },
+      { s: 0, w: 48, x: 76, y: 76, flip: true },
     ],
   },
-] as const;
-
-/** SVG filters that rough up each layer's blobs into fluffy cloud edges. */
-function CloudFilters() {
-  const settings = [
-    { id: "far", freq: 0.011, scale: 110, seed: 3 },
-    { id: "mid", freq: 0.012, scale: 150, seed: 7 },
-    { id: "near", freq: 0.013, scale: 190, seed: 11 },
-  ];
-  return (
-    <svg width="0" height="0" className="absolute" aria-hidden="true">
-      {settings.map((s) => (
-        <filter key={s.id} id={`cloud-${s.id}`} x="-40%" y="-40%" width="180%" height="180%">
-          <feTurbulence type="fractalNoise" baseFrequency={s.freq} numOctaves={4} seed={s.seed} result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale={s.scale} xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-      ))}
-    </svg>
-  );
-}
+];
 
 function CloudLayer({
   layer,
@@ -106,26 +73,6 @@ function CloudLayer({
     reduce ? "0vh" : `${(1 - r) * layer.rise - d * layer.drift}vh`,
   );
 
-  // Two identical copies side by side, so the sideways loop is seamless.
-  const blobs = [0, 100].flatMap((offset) =>
-    layer.clouds.map((c: Cloud, i) => (
-      <div
-        key={`${offset}-${i}`}
-        className="absolute rounded-[50%]"
-        style={{
-          left: `${(c.x + offset) / 2}%`, // container is 200vw wide, so vw → % is /2
-          top: `${c.y}vh`,
-          // on tall phone screens, widen clouds so they keep a natural shape
-          width: `max(${c.w}vw, ${c.w * 0.85}vh)`,
-          height: `${c.h}vh`,
-          // soft body with a brighter top-left, like light catching the cloud
-          background: `radial-gradient(ellipse 60% 55% at 40% 35%, ${layer.highlight}, transparent 70%), radial-gradient(ellipse 50% 50% at 50% 50%, ${layer.color} 0%, ${layer.color} 45%, transparent 72%)`,
-          filter: `url(#cloud-${layer.id})`,
-        }}
-      />
-    )),
-  );
-
   return (
     <motion.div style={{ y }} className="absolute inset-0">
       <div
@@ -134,7 +81,20 @@ function CloudLayer({
         className="absolute inset-y-0 left-0 w-[200vw] animate-[cloud-drift_120s_linear_infinite] will-change-transform motion-reduce:animate-none"
         style={{ animationDuration: `${layer.duration}s` }}
       >
-        {blobs}
+        {/* two identical copies side by side so the sideways loop is seamless */}
+        {[0, 100].flatMap((offset) =>
+          layer.clouds.map((c, i) => (
+            <Cloud
+              key={`${offset}-${i}`}
+              sprite={c.s}
+              width={`max(${c.w}vw, ${c.w * 1.1}vh)`}
+              left={`${c.x + offset}vw`}
+              top={`${c.y}vh`}
+              flip={c.flip}
+              opacity={c.o}
+            />
+          )),
+        )}
       </div>
     </motion.div>
   );
@@ -144,15 +104,14 @@ export function CloudSky({ sectionRef }: { sectionRef: React.RefObject<HTMLEleme
   const reduce = useReducedMotion();
   const target = sectionRef;
 
-  // 0 → 1 while the About section scrolls up from the bottom of the screen to the top.
+  // 0 → 1 while About scrolls up from the bottom of the screen to the top.
   const { scrollYProgress: rise } = useScroll({ target, offset: ["start end", "start start"] });
   // 0 → 1 across the whole About section (slow drift while you're in it).
   const { scrollYProgress: drift } = useScroll({ target, offset: ["start start", "end end"] });
-  // 0 → 1 as the About section's end scrolls out (fade away).
+  // 0 → 1 as About's end scrolls out (fade away).
   const { scrollYProgress: leave } = useScroll({ target, offset: ["end end", "end start"] });
-
-  // Dim while peeking behind the hero, full strength in About, gone after.
-  const opacity = useTransform([rise, leave], ([r, l]: number[]) => (0.5 + 0.5 * r) * (1 - l));
+  // Full strength (so it matches the cloud bank's sky floor exactly), gone after About.
+  const opacity = useTransform(leave, (l) => 1 - l);
 
   return (
     <motion.div
@@ -160,14 +119,12 @@ export function CloudSky({ sectionRef }: { sectionRef: React.RefObject<HTMLEleme
       style={{ opacity }}
       className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
     >
-      {/* twilight sky gradient, matching the hero video's grade */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#0e0b1d_0%,#221a3d_35%,#4a3466_68%,#8d5f84_88%,#b47b92_100%)]" />
-      <CloudFilters />
+      <div className="absolute inset-0" style={{ backgroundImage: "var(--sky-gradient)" }} />
       {LAYERS.map((layer) => (
         <CloudLayer key={layer.id} layer={layer} rise={rise} drift={drift} reduce={reduce} />
       ))}
       {/* gentle darkening in the middle so white text stays readable */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_45%_at_50%_45%,rgb(10_10_11/0.6),transparent_75%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_45%_at_50%_45%,rgb(10_10_11/0.55),transparent_75%)]" />
     </motion.div>
   );
 }

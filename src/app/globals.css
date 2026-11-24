@@ -58,6 +58,17 @@
   --lime: #c8f560;
   --cream: #e1e0cc; /* warm off-white for the hero's big type */
 
+  /* Sky + clouds ("Twilight", dark mode). Cloud images are neutral grey; they're tinted
+     from --cloud-light (lit tops) to --cloud-shadow (undersides). */
+  --sky-0: #0e0b1d;
+  --sky-1: #221a3d;
+  --sky-2: #4a3466;
+  --sky-3: #8d5f84;
+  --sky-4: #b47b92;
+  --cloud-light: #ffe6e2;
+  --cloud-shadow: #8a6fb2;
+  --sky-gradient: linear-gradient(to bottom, var(--sky-0) 0%, var(--sky-1) 35%, var(--sky-2) 68%, var(--sky-3) 88%, var(--sky-4) 100%);
+
   --primary: var(--lime);
   --primary-foreground: #0a0a0b;
   --secondary: #1c1c1f;
@@ -73,6 +84,18 @@
   --radius: 0.75rem;
 
   color-scheme: dark;
+}
+
+/* "Daybreak" sky for a future light mode: set data-theme="light" on <html> to use it.
+   (The rest of the light theme isn't built yet; these are ready for when it is.) */
+:root[data-theme="light"] {
+  --sky-0: #a9cbea;
+  --sky-1: #c4dcf1;
+  --sky-2: #dcebf6;
+  --sky-3: #efeee9;
+  --sky-4: #f7efe4;
+  --cloud-light: #ffffff;
+  --cloud-shadow: #b4c3d6;
 }
 
 @layer base {

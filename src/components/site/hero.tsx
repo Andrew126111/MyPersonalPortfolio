@@ -79,7 +79,7 @@ export function Hero() {
         <motion.div
           style={{ y: contentY, opacity: contentOpacity }}
           // lifted a little so the resting cloud tops along the bottom edge don't cover it
-          className="absolute inset-x-0 bottom-[6vh] px-4 pb-2 sm:px-6 md:px-10"
+          className="absolute inset-x-0 bottom-[10vh] px-4 pb-2 sm:bottom-[6vh] sm:px-6 md:px-10"
         >
           <div className="grid grid-cols-12 items-end gap-4">
             <div className="col-span-12 lg:col-span-8">
