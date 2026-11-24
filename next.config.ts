@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  images: {
+    // Placeholder photos in the About gallery (src/content/life.ts). Remove once replaced.
+    remotePatterns: [{ protocol: "https", hostname: "cdn.21st.dev" }],
+  },
   turbopack: {
     rules: {
       "*.css": {
