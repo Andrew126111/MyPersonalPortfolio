@@ -4,12 +4,20 @@ export const site = {
   handle: "andrew.n",
   // Shown in the browser tab title and link previews. Change here only.
   role: "Software Engineer",
+  // Footer copyright year (static, so the page can be prerendered).
+  year: 2026,
   school: "Queen's University",
   // Hero background video, self-hosted in /public. It's the 21st.dev prisma-hero demo clip,
   // restyled (mirrored, re-cropped, twilight colour grade) and compressed from 16 MB to 0.9 MB.
   // Must stay same-origin: the WebGL ripple uses it as a texture.
   heroVideo: "/hero.mp4",
   heroPoster: "/hero-poster.jpg",
+  // Contact extras. Leave empty to hide the card. Both get published on the public site
+  // and repo, so only fill them in if you're happy for them to be public.
+  //   email:  e.g. "you@example.com" (shown with a copy button)
+  //   resume: e.g. "/resume.pdf" after putting the PDF in /public
+  email: "",
+  resume: "",
   links: {
     github: "https://github.com/Andrew126111",
     linkedin: "https://www.linkedin.com/in/andrew-nguyenn18",
