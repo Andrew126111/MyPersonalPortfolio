@@ -1,4 +1,5 @@
 import { About } from "@/components/site/about";
+import { CloudTransition } from "@/components/site/cloud-transition";
 import { Hero } from "@/components/site/hero";
 import { Nav } from "@/components/site/nav";
 import { Projects } from "@/components/site/projects";
@@ -24,6 +25,8 @@ export default function Home() {
       <Nav />
       <main className="flex-1">
         <Hero />
+        {/* fixed overlay: clouds roll in as the hero leaves, then part to reveal About */}
+        <CloudTransition />
         <About />
         <Placeholder id="experience" title="Experience" />
         <Projects />
