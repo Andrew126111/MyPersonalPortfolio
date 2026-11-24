@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, GraduationCap, MapPin, Sparkles, Wrench } from "lucide-react";
+import { CloudSky } from "@/components/site/cloud-sky";
 import { LifeGallery } from "@/components/site/life-gallery";
 import { cn } from "@/lib/utils";
 
@@ -104,6 +105,7 @@ function TorontoClock() {
 
 export function About() {
   const gridRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
   // Feed the cursor position to every card so their borders glow as one surface.
   function onPointerMove(e: React.PointerEvent<HTMLDivElement>) {
@@ -122,7 +124,9 @@ export function About() {
   }
 
   return (
-    <section id="about" aria-labelledby="about-title" className="pb-20 sm:pb-32">
+    <section ref={sectionRef} id="about" aria-labelledby="about-title" className="pb-20 sm:pb-32">
+      {/* Animated cloud sky behind the whole section (peeks out behind the hero first). */}
+      <CloudSky sectionRef={sectionRef} />
       {/* Tunnel fly-through → photo circle → arc. Its title is this section's heading. */}
       <LifeGallery />
 

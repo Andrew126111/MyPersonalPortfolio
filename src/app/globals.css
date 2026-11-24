@@ -110,6 +110,12 @@
   background-size: 220px 220px;
 }
 
+/* Cloud layers slide one full copy to the left, then loop seamlessly. */
+@keyframes cloud-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100vw); }
+}
+
 @keyframes scrollcue {
   0% { transform: translateY(-100%); }
   100% { transform: translateY(200%); }

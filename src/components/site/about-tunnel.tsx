@@ -123,10 +123,8 @@ export function TunnelLayer({
       style={{ opacity: layerOpacity }}
       className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden"
     >
-      {/* background: dot grid, lime glow, depth rings */}
-      <div className="absolute inset-0 opacity-60 [background-image:radial-gradient(var(--subtle)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:radial-gradient(ellipse_70%_70%_at_50%_50%,#000_60%,transparent_100%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgb(200_245_96/0.10)_0%,transparent_70%)]" />
-      <div className="absolute size-[48vmin] rounded-full border border-lime/15" />
+      {/* depth rings (the cloud sky behind the section is the background) */}
+      <div className="absolute size-[48vmin] rounded-full border border-white/15" />
       <div className="absolute size-[76vmin] rounded-full border border-dashed border-white/10" />
 
       {/* title (this is the About section's heading) */}

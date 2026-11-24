@@ -218,7 +218,7 @@ function LifeArc() {
 
         {/* centre text while photos form a circle */}
         <div
-          className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center transition-opacity duration-500"
+          className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center transition-opacity duration-500 [text-shadow:0_2px_18px_rgb(0_0_0/0.6)]"
           style={{ opacity: introOpacity }}
           aria-hidden={introOpacity === 0}
         >
@@ -280,7 +280,7 @@ function LifeArc() {
 
         {/* caption for the active photo, right below it */}
         <div
-          className="pointer-events-none absolute inset-x-0 top-1/2 flex justify-center px-4 text-center"
+          className="pointer-events-none absolute inset-x-0 top-1/2 flex justify-center px-4 text-center [text-shadow:0_2px_18px_rgb(0_0_0/0.7)]"
           style={{ transform: `translateY(${captionTop}px)` }}
           aria-live="polite"
         >
