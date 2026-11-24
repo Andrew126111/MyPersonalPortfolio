@@ -1,89 +1,59 @@
 "use client";
 
 import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
-import { Cloud } from "@/components/clouds/cloud";
+import { Cloud, FogRow } from "@/components/clouds/cloud";
 
 /*
- * Animated cloud sky behind the About section.
+ * Animated sky behind the About section.
  *
- * Three layers of clouds (far, mid, near) drift slowly sideways at different speeds and
- * move at different speeds when you scroll (parallax: near clouds move most). Uses the same
- * cloud images and theme colours (--sky-*, --cloud-*) as the hero's cloud bank, so the
- * hand-off between them is seamless.
+ *   - far:  small, faint, slightly blurred clouds high up (depth)
+ *   - mid:  a few varied clouds at different sizes, flips, and opacities
+ *   - fog:  a continuous fog bank along the bottom (same fog as the hero's, so the two
+ *           sections feel like one sky)
  *
- * It's a fixed layer behind the page: hidden behind the full-bleed hero at first, it becomes
- * About's background as you scroll in, and fades out as About ends.
+ * Each layer drifts sideways at its own speed and moves at its own speed when you scroll
+ * (parallax). Colours come from the theme tokens (--sky-*, --cloud-*). It's a fixed layer
+ * behind the page that becomes About's background, and fades out as About ends.
  */
 
-type C = { s: number; w: number; x: number; y: number; flip?: boolean; o?: number };
+type C = { s: number; w: number; x: number; y: number; flip?: boolean; o?: number; blur?: number };
 // x/w in vw (within one 100vw copy), y = top edge in vh
 
-const LAYERS: { id: string; rise: number; drift: number; duration: number; clouds: C[] }[] = [
-  {
-    id: "far",
-    rise: 18, // vh the layer rises while About scrolls in
-    drift: 14, // vh of slow parallax drift across the whole section
-    duration: 260, // seconds for one full sideways loop
-    clouds: [
-      { s: 3, w: 24, x: 2, y: 8, o: 0.55 },
-      { s: 1, w: 18, x: 30, y: 20, flip: true, o: 0.45 },
-      { s: 5, w: 22, x: 55, y: 5, o: 0.5 },
-      { s: 2, w: 20, x: 80, y: 16, flip: true, o: 0.45 },
-    ],
-  },
-  {
-    id: "mid",
-    rise: 34,
-    drift: 26,
-    duration: 170,
-    clouds: [
-      { s: 0, w: 34, x: -6, y: 36, o: 0.85 },
-      { s: 4, w: 28, x: 34, y: 48, flip: true, o: 0.8 },
-      { s: 2, w: 32, x: 68, y: 38, o: 0.85 },
-    ],
-  },
-  {
-    id: "near",
-    rise: 55,
-    drift: 42,
-    duration: 120,
-    // overlapping clouds along the bottom form a continuous "sea of clouds"
-    clouds: [
-      { s: 5, w: 52, x: -16, y: 70 },
-      { s: 1, w: 46, x: 18, y: 76, flip: true },
-      { s: 3, w: 52, x: 46, y: 70 },
-      { s: 0, w: 48, x: 76, y: 76, flip: true },
-    ],
-  },
+const FAR: C[] = [
+  { s: 3, w: 16, x: 3, y: 7, o: 0.45, blur: 2 },
+  { s: 1, w: 11, x: 22, y: 20, flip: true, o: 0.35, blur: 2.5 },
+  { s: 5, w: 19, x: 38, y: 4, o: 0.5, blur: 2 },
+  { s: 4, w: 12, x: 58, y: 16, o: 0.35, blur: 2.5 },
+  { s: 2, w: 17, x: 72, y: 6, flip: true, o: 0.45, blur: 2 },
+  { s: 0, w: 10, x: 90, y: 22, o: 0.3, blur: 3 },
+];
+const MID: C[] = [
+  { s: 0, w: 30, x: -4, y: 34, o: 0.85 },
+  { s: 4, w: 20, x: 27, y: 46, flip: true, o: 0.7, blur: 0.5 },
+  { s: 2, w: 26, x: 47, y: 30, o: 0.8 },
+  { s: 5, w: 34, x: 70, y: 42, flip: true, o: 0.9 },
 ];
 
-function CloudLayer({
-  layer,
-  rise,
-  drift,
-  reduce,
-}: {
-  layer: (typeof LAYERS)[number];
-  rise: MotionValue<number>;
-  drift: MotionValue<number>;
-  reduce: boolean | null;
-}) {
-  // Starts low (rise=0) and lifts into place, then drifts up slowly through the section.
-  const y = useTransform([rise, drift], ([r, d]: number[]) =>
-    reduce ? "0vh" : `${(1 - r) * layer.rise - d * layer.drift}vh`,
+function Drift({ duration, distance, children }: { duration: number; distance?: string; children: React.ReactNode }) {
+  return (
+    <div
+      // Duration in the class keeps Tailwind's dev pipeline from dropping the keyframes;
+      // the inline style then sets each layer's real speed.
+      className="absolute inset-y-0 left-0 w-[200vw] animate-[cloud-drift_120s_linear_infinite] will-change-transform motion-reduce:animate-none"
+      style={{ animationDuration: `${duration}s`, ...(distance ? { ["--drift-distance" as string]: distance } : {}) }}
+    >
+      {children}
+    </div>
   );
+}
 
+function CloudLayer({ clouds, duration, y }: { clouds: C[]; duration: number; y: MotionValue<string> }) {
   return (
     <motion.div style={{ y }} className="absolute inset-0">
-      <div
-        // Duration in the class keeps Tailwind's dev pipeline from dropping the keyframes;
-        // the inline style then sets each layer's real speed.
-        className="absolute inset-y-0 left-0 w-[200vw] animate-[cloud-drift_120s_linear_infinite] will-change-transform motion-reduce:animate-none"
-        style={{ animationDuration: `${layer.duration}s` }}
-      >
+      <Drift duration={duration}>
         {/* two identical copies side by side so the sideways loop is seamless */}
         {[0, 100].flatMap((offset) =>
-          layer.clouds.map((c, i) => (
+          clouds.map((c, i) => (
             <Cloud
               key={`${offset}-${i}`}
               sprite={c.s}
@@ -92,11 +62,24 @@ function CloudLayer({
               top={`${c.y}vh`}
               flip={c.flip}
               opacity={c.o}
+              blur={c.blur}
             />
           )),
         )}
-      </div>
+      </Drift>
     </motion.div>
+  );
+}
+
+function useLayerY(
+  rise: MotionValue<number>,
+  drift: MotionValue<number>,
+  reduce: boolean | null,
+  riseVh: number,
+  driftVh: number,
+) {
+  return useTransform([rise, drift], ([r, d]: number[]) =>
+    reduce ? "0vh" : `${(1 - r) * riseVh - d * driftVh}vh`,
   );
 }
 
@@ -110,19 +93,39 @@ export function CloudSky({ sectionRef }: { sectionRef: React.RefObject<HTMLEleme
   const { scrollYProgress: drift } = useScroll({ target, offset: ["start start", "end end"] });
   // 0 → 1 as About's end scrolls out (fade away).
   const { scrollYProgress: leave } = useScroll({ target, offset: ["end end", "end start"] });
-  // Full strength (so it matches the cloud bank's sky floor exactly), gone after About.
   const opacity = useTransform(leave, (l) => 1 - l);
+
+  // Parallax: each layer starts lower and lifts into place, then drifts up slowly.
+  const farY = useLayerY(rise, drift, reduce, 14, 10);
+  const midY = useLayerY(rise, drift, reduce, 28, 22);
+  const fogY = useLayerY(rise, drift, reduce, 46, 36);
 
   return (
     <motion.div
       aria-hidden="true"
       style={{ opacity }}
-      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden [--fog-scale:2.2] sm:[--fog-scale:1]"
     >
       <div className="absolute inset-0" style={{ backgroundImage: "var(--sky-gradient)" }} />
-      {LAYERS.map((layer) => (
-        <CloudLayer key={layer.id} layer={layer} rise={rise} drift={drift} reduce={reduce} />
-      ))}
+      <CloudLayer clouds={FAR} duration={300} y={farY} />
+      <CloudLayer clouds={MID} duration={190} y={midY} />
+
+      {/* fog bank along the bottom, matching the hero's fog */}
+      <motion.div style={{ y: fogY }} className="absolute inset-0">
+        <Drift duration={140} distance="calc(100vw * var(--fog-scale, 1))">
+          <div
+            className="absolute inset-x-0 top-[84vh] h-[40vh]"
+            style={{
+              background:
+                "linear-gradient(to bottom, color-mix(in srgb, var(--cloud-light) 35%, var(--cloud-shadow)), transparent)",
+            }}
+          />
+          {/* step 25vw divides 100vw evenly (and 4 fog images), so the loop is seamless */}
+          <FogRow top="70vh" width={48} step={25} offset={5} opacity={0.75} blur={2} span={200} />
+          <FogRow top="77vh" width={56} step={25} offset={-7} span={200} />
+        </Drift>
+      </motion.div>
+
       {/* gentle darkening in the middle so white text stays readable */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_45%_at_50%_45%,rgb(10_10_11/0.55),transparent_75%)]" />
     </motion.div>

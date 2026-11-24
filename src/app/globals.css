@@ -136,7 +136,8 @@
 /* Cloud layers slide one full copy to the left, then loop seamlessly. */
 @keyframes cloud-drift {
   from { transform: translateX(0); }
-  to { transform: translateX(-100vw); }
+  /* one full copy of the layer; fog layers on phones are scaled, so they set a longer distance */
+  to { transform: translateX(calc(-1 * var(--drift-distance, 100vw))); }
 }
 
 @keyframes scrollcue {

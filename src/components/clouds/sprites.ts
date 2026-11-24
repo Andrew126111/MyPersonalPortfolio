@@ -7,3 +7,10 @@ export const CLOUD_SPRITES = [
   { src: "/clouds/cloud-5.webp", aspect: 2.579 },
   { src: "/clouds/cloud-6.webp", aspect: 2.225 },
 ] as const;
+
+export const FOG_SPRITES = [
+  { src: "/clouds/fog-1.webp", aspect: 4.362 },
+  { src: "/clouds/fog-2.webp", aspect: 3.993 },
+  { src: "/clouds/fog-3.webp", aspect: 4.452 },
+  { src: "/clouds/fog-4.webp", aspect: 3.926 },
+] as const;
