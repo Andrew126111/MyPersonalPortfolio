@@ -31,7 +31,7 @@
   --color-surface: var(--card);
   --color-surface-2: var(--surface-2);
   --color-subtle: var(--subtle);
-  --color-lime: var(--lime);
+  --color-glow: var(--glow);
   --color-cream: var(--cream);
 
   --font-sans: var(--font-inter);
@@ -45,42 +45,43 @@
   --radius-2xl: calc(var(--radius) * 1.8);
 }
 
-/* Ink tokens: values and contrast ratios documented in DESIGN.md */
+/* "Blue hour" theme (dark). Values and contrast ratios documented in DESIGN.md. */
 :root {
-  --background: #0a0a0b;
-  --foreground: #ededed;
-  --card: #141416;
-  --card-foreground: #ededed;
-  --popover: #141416;
-  --popover-foreground: #ededed;
-  --surface-2: #1c1c1f;
-  --subtle: #5c5c61; /* decorative only, never text */
-  --lime: #c8f560;
+  --background: #07111f; /* deep navy */
+  --foreground: #e8eef6;
+  --card: #0e1a2b;
+  --card-foreground: #e8eef6;
+  --popover: #0e1a2b;
+  --popover-foreground: #e8eef6;
+  --surface-2: #142438;
+  --subtle: #3a5371; /* decorative only, never text */
+  --glow: #5ee0ff; /* icy cyan accent */
   --cream: #e1e0cc; /* warm off-white for the hero's big type */
 
-  /* Sky + clouds ("Twilight", dark mode). Cloud images are neutral grey; they're tinted
-     from --cloud-light (lit tops) to --cloud-shadow (undersides). */
-  --sky-0: #0e0b1d;
-  --sky-1: #221a3d;
-  --sky-2: #4a3466;
-  --sky-3: #8d5f84;
-  --sky-4: #b47b92;
-  --cloud-light: #ffe6e2;
-  --cloud-shadow: #8a6fb2;
+  /* Sky + clouds. Cloud images are neutral grey; they're tinted from --cloud-light (lit
+     tops) to --cloud-shadow (undersides). --sky-gradient is the About-section sky (blue
+     hour); the page-wide sky (sky.tsx) darkens from this into night further down. */
+  --sky-0: #0c2340;
+  --sky-1: #173d63;
+  --sky-2: #2f6593;
+  --sky-3: #5f9cc7;
+  --sky-4: #9cc9e6;
+  --cloud-light: #eaf5fc;
+  --cloud-shadow: #6d93b9;
   --sky-gradient: linear-gradient(to bottom, var(--sky-0) 0%, var(--sky-1) 35%, var(--sky-2) 68%, var(--sky-3) 88%, var(--sky-4) 100%);
 
-  --primary: var(--lime);
-  --primary-foreground: #0a0a0b;
-  --secondary: #1c1c1f;
-  --secondary-foreground: #ededed;
-  --muted: #1c1c1f;
-  --muted-foreground: #8a8a8f;
-  --accent: #1c1c1f;
-  --accent-foreground: #ededed;
+  --primary: var(--glow);
+  --primary-foreground: #07111f;
+  --secondary: #142438;
+  --secondary-foreground: #e8eef6;
+  --muted: #142438;
+  --muted-foreground: #8ea3bd;
+  --accent: #142438;
+  --accent-foreground: #e8eef6;
   --destructive: #f87171;
-  --border: #26262a;
-  --input: #26262a;
-  --ring: var(--lime);
+  --border: #1d324b;
+  --input: #1d324b;
+  --ring: var(--glow);
   --radius: 0.75rem;
 
   color-scheme: dark;
@@ -117,13 +118,13 @@
     cursor: pointer;
   }
   :focus-visible {
-    outline: 2px solid var(--lime);
+    outline: 2px solid var(--glow);
     outline-offset: 3px;
     border-radius: 6px;
   }
   ::selection {
-    background: var(--lime);
-    color: #0a0a0b;
+    background: var(--glow);
+    color: var(--background);
   }
 }
 
@@ -138,6 +139,12 @@
   from { transform: translateX(0); }
   /* one full copy of the layer; fog layers on phones are scaled, so they set a longer distance */
   to { transform: translateX(calc(-1 * var(--drift-distance, 100vw))); }
+}
+
+/* Stars gently brighten and dim. */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
 }
 
 @keyframes scrollcue {

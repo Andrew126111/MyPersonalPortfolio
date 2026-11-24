@@ -3,6 +3,7 @@ import { Experience } from "@/components/site/experience";
 import { Hero } from "@/components/site/hero";
 import { Nav } from "@/components/site/nav";
 import { Projects } from "@/components/site/projects";
+import { Sky } from "@/components/site/sky";
 
 // Placeholder for sections not built yet, so the nav links still work.
 function Placeholder({ id, title }: { id: string; title: string }) {
@@ -22,6 +23,8 @@ function Placeholder({ id, title }: { id: string; title: string }) {
 export default function Home() {
   return (
     <>
+      {/* one fixed sky behind the whole page: blue hour into night as you scroll */}
+      <Sky />
       <Nav />
       <main className="flex-1">
         <Hero />

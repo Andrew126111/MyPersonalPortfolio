@@ -20,7 +20,7 @@ export function SectionHeading({ eyebrow, title, id }: Props) {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="mb-10 sm:mb-14"
     >
-      <p className="font-mono text-xs uppercase tracking-[0.12em] text-lime">{eyebrow}</p>
+      <p className="font-mono text-xs uppercase tracking-[0.12em] text-glow">{eyebrow}</p>
       <h2 id={id} className="mt-3 max-w-[22ch] text-3xl leading-[1.1] font-bold sm:text-[44px]">
         {title}
       </h2>

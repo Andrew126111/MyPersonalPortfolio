@@ -252,7 +252,7 @@ function LifeArc() {
                   hidden && "pointer-events-none",
                   "shadow-[0_24px_48px_-24px_rgb(0_0_0/0.9)] transition-[border-color,box-shadow] duration-300",
                   isActive
-                    ? "border-lime shadow-[0_0_0_1px_var(--lime),0_24px_60px_-20px_rgb(200_245_96/0.35)]"
+                    ? "border-glow shadow-[0_0_0_1px_var(--glow),0_24px_60px_-20px_rgb(200_245_96/0.35)]"
                     : "border-border hover:border-muted-foreground",
                 )}
                 style={{
@@ -294,7 +294,7 @@ function LifeArc() {
                 transition={{ duration: 0.25, ease: "easeOut" }}
                 className="max-w-[44ch]"
               >
-                <p className="font-mono text-[11px] tracking-[0.12em] text-lime">
+                <p className="font-mono text-[11px] tracking-[0.12em] text-glow">
                   {String(active + 1).padStart(2, "0")} / {String(N).padStart(2, "0")}
                 </p>
                 <p className="mt-2 font-heading text-xl font-bold sm:text-2xl">
@@ -317,7 +317,7 @@ function LifeArc() {
 function LifeGrid() {
   return (
     <div className="mx-auto max-w-[1200px] px-4 pt-20 sm:px-6 sm:pt-32">
-      <p className="font-mono text-xs tracking-[0.12em] text-lime uppercase">01 · About</p>
+      <p className="font-mono text-xs tracking-[0.12em] text-glow uppercase">01 · About</p>
       <h2 id="about-title" className="mt-3 mb-10 text-3xl font-bold sm:text-[44px]">
         Hi, I&apos;m Andrew. <span className="text-muted-foreground">Life outside the terminal.</span>
       </h2>

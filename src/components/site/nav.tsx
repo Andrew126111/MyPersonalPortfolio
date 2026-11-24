@@ -24,7 +24,7 @@ export function Nav() {
       <nav className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-4 sm:px-6">
         <a href="#top" tabIndex={visible ? 0 : -1} className="font-heading text-[15px] font-medium tracking-tight">
           {site.handle}
-          <span className="text-lime">.</span>
+          <span className="text-glow">.</span>
         </a>
         <ul className="flex items-center gap-1 text-sm text-muted-foreground">
           {site.nav
@@ -44,7 +44,7 @@ export function Nav() {
             <a
               href="#contact"
               tabIndex={visible ? 0 : -1}
-              className="ml-2 rounded-full border border-border px-4 py-1.5 text-foreground transition-colors duration-200 hover:border-lime hover:text-lime"
+              className="ml-2 rounded-full border border-border px-4 py-1.5 text-foreground transition-colors duration-200 hover:border-glow hover:text-glow"
             >
               Say hi
             </a>

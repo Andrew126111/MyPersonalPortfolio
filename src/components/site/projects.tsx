@@ -32,7 +32,7 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
 
       <div className={cn(flip && "lg:order-1")}>
         <p className="font-mono text-xs text-muted-foreground">
-          <span className="text-lime">{String(index + 1).padStart(2, "0")}</span> · {project.date}
+          <span className="text-glow">{String(index + 1).padStart(2, "0")}</span> · {project.date}
         </p>
         <h3 id={`project-${index}`} className="mt-3 text-3xl font-bold sm:text-4xl">
           {project.name}
@@ -42,7 +42,7 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
         <ul className="mt-6 space-y-3">
           {project.points.map((point) => (
             <li key={point} className="flex gap-3 text-sm leading-relaxed text-muted-foreground">
-              <span className="mt-2 size-1 shrink-0 rounded-full bg-lime" aria-hidden="true" />
+              <span className="mt-2 size-1 shrink-0 rounded-full bg-glow" aria-hidden="true" />
               {point}
             </li>
           ))}
@@ -66,7 +66,7 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
                 href={project.links.demo}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full bg-lime px-4 py-2 text-sm font-medium text-ink transition-transform duration-200 hover:-translate-y-0.5"
+                className="inline-flex items-center gap-1.5 rounded-full bg-glow px-4 py-2 text-sm font-medium text-ink transition-transform duration-200 hover:-translate-y-0.5"
               >
                 Live demo <ArrowUpRight className="size-4" />
               </a>
@@ -76,7 +76,7 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
                 href={project.links.github}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-foreground transition-colors duration-200 hover:border-lime hover:text-lime"
+                className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-foreground transition-colors duration-200 hover:border-glow hover:text-glow"
               >
                 <GitHubIcon className="size-4" /> Source
               </a>
@@ -115,7 +115,7 @@ export function Projects() {
         href={site.links.github}
         target="_blank"
         rel="noreferrer"
-        className="mt-20 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-lime"
+        className="mt-20 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-glow"
       >
         <GitHubIcon className="size-4" /> More on GitHub <ArrowUpRight className="size-3.5" />
       </a>

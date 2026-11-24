@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, GraduationCap, MapPin, Sparkles, Wrench } from "lucide-react";
-import { CloudSky } from "@/components/site/cloud-sky";
 import { LifeGallery } from "@/components/site/life-gallery";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +19,7 @@ const BUILDS = ["LLM pipelines", "AI agents", "Full-stack apps", "Automation", "
 /* ───────────────────────── bento card ───────────────────────── */
 
 /**
- * Card whose border lights up lime near the cursor. The glow position is set on every
+ * Card whose border lights up glow near the cursor. The glow position is set on every
  * card by the grid (see `onPointerMove` in About), so neighbouring cards light up together
  * as the cursor moves between them.
  */
@@ -47,9 +46,9 @@ function BentoCard({
       )}
       style={{
         // Two backgrounds: the card fill (inside the border) and a cursor-following
-        // lime glow that only shows through the 1px transparent border.
+        // glow glow that only shows through the 1px transparent border.
         background:
-          "linear-gradient(var(--card), var(--card)) padding-box, radial-gradient(260px circle at var(--x, -999px) var(--y, -999px), rgb(200 245 96 / 0.6), var(--border) 70%) border-box",
+          "linear-gradient(var(--card), var(--card)) padding-box, radial-gradient(260px circle at var(--x, -999px) var(--y, -999px), rgb(94 224 255 / 0.6), var(--border) 70%) border-box",
       }}
     >
       {/* faint inner glow following the cursor */}
@@ -58,7 +57,7 @@ function BentoCard({
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         style={{
           background:
-            "radial-gradient(320px circle at var(--x, -999px) var(--y, -999px), rgb(200 245 96 / 0.06), transparent 60%)",
+            "radial-gradient(320px circle at var(--x, -999px) var(--y, -999px), rgb(94 224 255 / 0.06), transparent 60%)",
         }}
       />
       <div className="relative h-full">{children}</div>
@@ -125,8 +124,6 @@ export function About() {
 
   return (
     <section ref={sectionRef} id="about" aria-labelledby="about-title" className="pb-20 sm:pb-32">
-      {/* Animated cloud sky behind the whole section (peeks out behind the hero first). */}
-      <CloudSky sectionRef={sectionRef} />
       {/* Tunnel fly-through → photo circle → arc. Its title is this section's heading. */}
       <LifeGallery />
 
@@ -154,7 +151,7 @@ export function About() {
               </div>
               <a
                 href="#experience"
-                className="inline-flex w-fit items-center gap-1 text-sm text-foreground transition-colors duration-200 hover:text-lime"
+                className="inline-flex w-fit items-center gap-1 text-sm text-foreground transition-colors duration-200 hover:text-glow"
               >
                 See my experience <ArrowUpRight className="size-3.5" />
               </a>
@@ -187,7 +184,7 @@ export function About() {
                     key={b}
                     className="flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
                   >
-                    <span className="size-1 rounded-full bg-lime" aria-hidden="true" />
+                    <span className="size-1 rounded-full bg-glow" aria-hidden="true" />
                     {b}
                   </li>
                 ))}
@@ -202,8 +199,8 @@ export function About() {
               <div>
                 <p className="flex items-center gap-2 font-heading text-2xl font-bold">
                   <span className="relative flex size-2.5" aria-hidden="true">
-                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-lime opacity-60 motion-reduce:animate-none" />
-                    <span className="relative inline-flex size-2.5 rounded-full bg-lime" />
+                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-glow opacity-60 motion-reduce:animate-none" />
+                    <span className="relative inline-flex size-2.5 rounded-full bg-glow" />
                   </span>
                   Toronto, ON
                 </p>
@@ -226,7 +223,7 @@ export function About() {
                       {row.items.map((item) => (
                         <span
                           key={item}
-                          className="rounded-full border border-border bg-surface-2 px-3 py-1 text-xs text-foreground transition-colors duration-200 hover:border-lime hover:text-lime"
+                          className="rounded-full border border-border bg-surface-2 px-3 py-1 text-xs text-foreground transition-colors duration-200 hover:border-glow hover:text-glow"
                         >
                           {item}
                         </span>

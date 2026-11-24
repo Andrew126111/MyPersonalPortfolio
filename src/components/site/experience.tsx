@@ -49,9 +49,9 @@ function RoleRow({ role, index }: { role: Role; index: number }) {
       {/* timeline node */}
       <span
         aria-hidden="true"
-        className="absolute top-1.5 left-0 flex size-[15px] -translate-x-1/2 items-center justify-center rounded-full border border-lime/60 bg-ink sm:left-0"
+        className="absolute top-1.5 left-0 flex size-[15px] -translate-x-1/2 items-center justify-center rounded-full border border-glow/60 bg-ink sm:left-0"
       >
-        <span className="size-1.5 rounded-full bg-lime" />
+        <span className="size-1.5 rounded-full bg-glow" />
       </span>
 
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_1.05fr] lg:gap-12">
@@ -62,7 +62,7 @@ function RoleRow({ role, index }: { role: Role; index: number }) {
           transition={{ duration: 0.7, ease: EASE }}
         >
           <p className="font-mono text-xs text-muted-foreground">
-            <span className="text-lime">{role.dates}</span>
+            <span className="text-glow">{role.dates}</span>
             <span className="mx-2">·</span>
             <MapPin className="mr-1 inline size-3 -translate-y-px" aria-hidden="true" />
             {role.location}
@@ -79,7 +79,7 @@ function RoleRow({ role, index }: { role: Role; index: number }) {
             {role.stats.map((s) => (
               <div key={s.label} className="rounded-xl border border-border bg-surface/60 p-3">
                 <dt className="sr-only">{s.label}</dt>
-                <dd className="font-heading text-xl font-bold whitespace-nowrap text-lime sm:text-3xl">
+                <dd className="font-heading text-xl font-bold whitespace-nowrap text-glow sm:text-3xl">
                   <CountUp to={s.value} prefix={s.prefix} suffix={s.suffix} />
                 </dd>
                 <dd className="mt-1 text-[11px] leading-snug text-muted-foreground sm:text-xs">{s.label}</dd>
@@ -90,7 +90,7 @@ function RoleRow({ role, index }: { role: Role; index: number }) {
           <ul className="mt-6 space-y-3">
             {role.points.map((p) => (
               <li key={p} className="flex gap-3 text-sm leading-relaxed text-muted-foreground">
-                <span className="mt-2 size-1 shrink-0 rounded-full bg-lime" aria-hidden="true" />
+                <span className="mt-2 size-1 shrink-0 rounded-full bg-glow" aria-hidden="true" />
                 {p}
               </li>
             ))}
@@ -143,7 +143,7 @@ export function Experience() {
         <motion.div
           aria-hidden="true"
           style={{ scaleY: reduce ? 1 : fill }}
-          className="absolute top-2 bottom-0 left-0 w-px origin-top bg-lime shadow-[0_0_12px_1px_rgb(200_245_96/0.6)]"
+          className="absolute top-2 bottom-0 left-0 w-px origin-top bg-glow shadow-[0_0_12px_1px_rgb(200_245_96/0.6)]"
         />
 
         <div className="space-y-24 sm:space-y-32">

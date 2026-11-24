@@ -27,8 +27,8 @@ function Chip({ children, className = "" }: { children: React.ReactNode; classNa
 function LiveDot() {
   return (
     <span className="relative flex size-1.5" aria-hidden="true">
-      <span className="absolute inline-flex size-full animate-ping rounded-full bg-lime opacity-60 motion-reduce:animate-none" />
-      <span className="relative inline-flex size-1.5 rounded-full bg-lime" />
+      <span className="absolute inline-flex size-full animate-ping rounded-full bg-glow opacity-60 motion-reduce:animate-none" />
+      <span className="relative inline-flex size-1.5 rounded-full bg-glow" />
     </span>
   );
 }
@@ -46,7 +46,7 @@ export function FacadeVisual() {
       <Depth depth={16} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="w-[176px] scale-[0.82] rounded-[28px] border border-border bg-ink p-2.5 shadow-[0_30px_60px_-24px_rgb(0_0_0/0.9)] sm:scale-100">
           <div className="flex items-center gap-2 px-1 pb-2">
-            <span className="size-6 rounded-full border-2 border-lime bg-surface-2" />
+            <span className="size-6 rounded-full border-2 border-glow bg-surface-2" />
             <div>
               <p className="text-[10px] font-medium text-foreground">nova.ai</p>
               <p className="text-[8px] text-muted-foreground">AI persona · auto-posted</p>
@@ -54,9 +54,9 @@ export function FacadeVisual() {
           </div>
           {/* abstract "persona portrait" */}
           <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-surface-2">
-            <div className="absolute top-[22%] left-1/2 size-14 -translate-x-1/2 rounded-full bg-[#2a2a2e]" />
-            <div className="absolute -bottom-6 left-1/2 h-24 w-32 -translate-x-1/2 rounded-t-full bg-[#2a2a2e]" />
-            <div className="absolute top-3 right-3 rounded-full bg-ink/70 px-1.5 py-0.5 font-mono text-[8px] text-lime">
+            <div className="absolute top-[22%] left-1/2 size-14 -translate-x-1/2 rounded-full bg-[#1f3550]" />
+            <div className="absolute -bottom-6 left-1/2 h-24 w-32 -translate-x-1/2 rounded-t-full bg-[#1f3550]" />
+            <div className="absolute top-3 right-3 rounded-full bg-ink/70 px-1.5 py-0.5 font-mono text-[8px] text-glow">
               REEL
             </div>
           </div>
@@ -75,14 +75,14 @@ export function FacadeVisual() {
       {/* floating pipeline status chips (closest layer) */}
       <Depth depth={34} className="absolute top-[5%] left-[5%] sm:left-[8%]">
         <Chip>
-          <Sparkles className="size-3 text-lime" /> Gemini 2.5 Pro · persona image
+          <Sparkles className="size-3 text-glow" /> Gemini 2.5 Pro · persona image
         </Chip>
       </Depth>
       <Depth depth={28} className="absolute top-[46%] right-[4%] sm:right-[8%]">
         <div className="w-[150px] rounded-xl border border-border bg-surface/90 p-3 shadow-[0_12px_30px_-12px_rgb(0_0_0/0.9)] backdrop-blur-sm">
           <p className="font-mono text-[10px] text-muted-foreground">Veo 3 · rendering reel</p>
           <div className="mt-2 h-1 overflow-hidden rounded-full bg-surface-2">
-            <div className="h-full w-[68%] rounded-full bg-lime" />
+            <div className="h-full w-[68%] rounded-full bg-glow" />
           </div>
         </div>
       </Depth>
@@ -133,7 +133,7 @@ function Chart() {
       {CANDLES.map((k, i) => {
         const up = k.c >= k.o;
         const x = i * w + w / 2;
-        const color = up ? "var(--lime)" : "var(--subtle)";
+        const color = up ? "var(--glow)" : "var(--subtle)";
         return (
           <g key={i}>
             <line x1={x} x2={x} y1={100 - k.h} y2={100 - k.l} stroke={color} strokeWidth="0.4" />
@@ -172,7 +172,7 @@ export function HeuristXVisual() {
             <span className="ml-2 truncate rounded-md bg-surface px-2 py-0.5 font-mono text-[9px] text-muted-foreground">
               trading-platform.app/BTC-USD
             </span>
-            <span className="ml-auto flex size-4 items-center justify-center rounded bg-lime text-[8px] font-bold text-ink">
+            <span className="ml-auto flex size-4 items-center justify-center rounded bg-glow text-[8px] font-bold text-ink">
               H
             </span>
           </div>
@@ -188,15 +188,15 @@ export function HeuristXVisual() {
 
       {/* injected intervention overlay */}
       <Depth depth={30} className="absolute right-[3%] bottom-[6%] sm:right-[5%]">
-        <div className="w-[210px] rounded-xl border border-lime/40 bg-surface/95 p-3 shadow-[0_20px_50px_-16px_rgb(0_0_0/0.95)] backdrop-blur-sm">
-          <p className="flex items-center gap-1.5 font-mono text-[10px] text-lime">
+        <div className="w-[210px] rounded-xl border border-glow/40 bg-surface/95 p-3 shadow-[0_20px_50px_-16px_rgb(0_0_0/0.95)] backdrop-blur-sm">
+          <p className="flex items-center gap-1.5 font-mono text-[10px] text-glow">
             <ShieldAlert className="size-3" /> HeuristX
           </p>
           <p className="mt-1.5 text-[11px] leading-snug text-foreground">
             4th trade in 10 minutes, right after a loss. Want to pause before you buy?
           </p>
           <div className="mt-2.5 flex gap-1.5">
-            <span className="rounded-full bg-lime px-2.5 py-1 text-[10px] font-medium text-ink">
+            <span className="rounded-full bg-glow px-2.5 py-1 text-[10px] font-medium text-ink">
               Take 5 min
             </span>
             <span className="rounded-full border border-border px-2.5 py-1 text-[10px] text-muted-foreground">

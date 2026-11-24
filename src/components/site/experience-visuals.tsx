@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
  */
 
 const panel =
-  "relative h-full w-full overflow-hidden rounded-2xl border border-border bg-[#0d0d10] [background-image:radial-gradient(var(--subtle)_1px,transparent_1px)] [background-size:22px_22px]";
+  "relative h-full w-full overflow-hidden rounded-2xl border border-border bg-[#0a1424] [background-image:radial-gradient(var(--subtle)_1px,transparent_1px)] [background-size:22px_22px]";
 
 /** Re-render only when `progress` crosses a threshold (cheap way to toggle pop-ins). */
 function useStep(progress: MotionValue<number>, thresholds: number[]) {
@@ -90,15 +90,15 @@ export function FlightVisual({ progress }: { progress: MotionValue<number> }) {
       <svg viewBox="0 0 520 300" className="absolute inset-0 h-full w-full">
         {/* dashed route + the part already flown */}
         <path ref={pathRef} d={FLIGHT_PATH} fill="none" stroke="var(--border)" strokeWidth="2" strokeDasharray="4 6" />
-        <motion.path d={FLIGHT_PATH} fill="none" stroke="var(--lime)" strokeWidth="2.5" strokeLinecap="round" style={{ pathLength: trail }} />
+        <motion.path d={FLIGHT_PATH} fill="none" stroke="var(--glow)" strokeWidth="2.5" strokeLinecap="round" style={{ pathLength: trail }} />
         {/* airports */}
         {[
           { x: 70, y: 150, code: "YYZ", city: "Toronto" },
           { x: 450, y: 100, code: "LIS", city: "Lisbon" },
         ].map((a) => (
           <g key={a.code}>
-            <circle cx={a.x} cy={a.y} r="10" fill="var(--lime)" opacity="0.15" />
-            <circle cx={a.x} cy={a.y} r="4" fill="var(--lime)" />
+            <circle cx={a.x} cy={a.y} r="10" fill="var(--glow)" opacity="0.15" />
+            <circle cx={a.x} cy={a.y} r="4" fill="var(--glow)" />
             <text x={a.x} y={a.y + 26} textAnchor="middle" fill="var(--foreground)" fontSize="14" fontFamily="var(--font-mono)">
               {a.code}
             </text>
@@ -110,31 +110,31 @@ export function FlightVisual({ progress }: { progress: MotionValue<number> }) {
         {/* plane (Lucide icon path, drawn at the current point) */}
         <g ref={planeRef} transform="translate(70 150)">
           <g transform="translate(-12 -12)">
-            <circle cx="12" cy="12" r="15" fill="#0d0d10" />
+            <circle cx="12" cy="12" r="15" fill="#0a1424" />
             <Plane x={0} y={0} width={24} height={24} color="var(--cream)" strokeWidth={1.75} />
           </g>
         </g>
       </svg>
 
       <Toast show={step >= 1} className="top-4 left-4">
-        <Sparkles className="size-4 text-lime" />
+        <Sparkles className="size-4 text-glow" />
         <span>
-          Searching <span ref={counterRef} className="font-mono text-lime tabular-nums">300</span> airlines
+          Searching <span ref={counterRef} className="font-mono text-glow tabular-nums">300</span> airlines
           <span className="text-muted-foreground"> · Duffel</span>
         </span>
       </Toast>
       {/* checkout + confirmation stack along the bottom */}
       <div className="absolute inset-x-4 bottom-4 flex flex-col items-start gap-2">
         <Toast show={step >= 2} className="relative">
-          <CreditCard className="size-4 text-lime" />
+          <CreditCard className="size-4 text-glow" />
           <span>
             Checkout <span className="font-mono">CAD ⇄ USD</span>
             <span className="text-muted-foreground"> · Stripe</span>
           </span>
-          <Check className="size-3.5 text-lime" />
+          <Check className="size-3.5 text-glow" />
         </Toast>
         <Toast show={step >= 3} className="relative">
-          <Mail className="size-4 text-lime" />
+          <Mail className="size-4 text-glow" />
           <span>
             Booking confirmed, email sent<span className="text-muted-foreground"> · Resend</span>
           </span>
@@ -209,7 +209,7 @@ export function PipelineVisual({ progress }: { progress: MotionValue<number> }) 
         <motion.path
           d={ROUTE}
           fill="none"
-          stroke="var(--lime)"
+          stroke="var(--glow)"
           strokeWidth="2"
           vectorEffect="non-scaling-stroke"
           style={{ pathLength: trail }}
@@ -219,7 +219,7 @@ export function PipelineVisual({ progress }: { progress: MotionValue<number> }) 
       {/* travelling data pulse */}
       <div
         ref={pulseRef}
-        className="absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-lime opacity-0 shadow-[0_0_16px_4px_rgb(200_245_96/0.6)]"
+        className="absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-glow opacity-0 shadow-[0_0_16px_4px_rgb(200_245_96/0.6)]"
       />
 
       {/* nodes */}
@@ -232,12 +232,12 @@ export function PipelineVisual({ progress }: { progress: MotionValue<number> }) 
             className={cn(
               "absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-lg border px-2 py-1.5 font-mono text-[10px] whitespace-nowrap transition-all duration-300 sm:text-[11px]",
               on
-                ? "border-lime/60 bg-surface text-foreground shadow-[0_0_24px_-6px_rgb(200_245_96/0.5)]"
-                : "border-border bg-[#0d0d10] text-muted-foreground",
+                ? "border-glow/60 bg-surface text-foreground shadow-[0_0_24px_-6px_rgb(200_245_96/0.5)]"
+                : "border-border bg-[#0a1424] text-muted-foreground",
             )}
             style={{ left: `${n.x}%`, top: `${(n.y / 60) * 100}%` }}
           >
-            <Icon className={cn("size-3", on && "text-lime")} />
+            <Icon className={cn("size-3", on && "text-glow")} />
             {n.label}
           </div>
         );
@@ -245,13 +245,13 @@ export function PipelineVisual({ progress }: { progress: MotionValue<number> }) 
 
       {/* outputs + the time saved */}
       <Toast show={step >= 5} className="right-4 bottom-4">
-        <FileSpreadsheet className="size-4 text-lime" /> Sheets
-        <Presentation className="ml-1 size-4 text-lime" /> Slides
-        <Check className="size-3.5 text-lime" />
+        <FileSpreadsheet className="size-4 text-glow" /> Sheets
+        <Presentation className="ml-1 size-4 text-glow" /> Slides
+        <Check className="size-3.5 text-glow" />
       </Toast>
       <Toast show={step >= 6} className="top-4 right-4">
         <span className="text-muted-foreground line-through">hours</span>
-        <span className="font-mono text-lime">→ &lt;1 min</span>
+        <span className="font-mono text-glow">→ &lt;1 min</span>
         <span className="text-muted-foreground">insight report</span>
       </Toast>
     </div>

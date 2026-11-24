@@ -132,7 +132,7 @@ export function TunnelLayer({
         style={{ scale: titleScale, opacity: titleOpacity }}
         className="z-0 flex max-w-xl flex-col items-center px-6 text-center"
       >
-        <p className="mb-4 font-mono text-xs tracking-[0.4em] text-lime uppercase">01 · About</p>
+        <p className="mb-4 font-mono text-xs tracking-[0.4em] text-glow uppercase">01 · About</p>
         <h2
           id="about-title"
           className="bg-gradient-to-b from-white via-white to-white/40 bg-clip-text text-5xl leading-[0.9] font-bold tracking-tighter text-transparent sm:text-7xl md:text-8xl"
@@ -152,7 +152,7 @@ export function TunnelLayer({
         className="absolute bottom-8 z-20 flex flex-col items-center gap-2 font-mono text-xs tracking-[0.3em] text-muted-foreground uppercase"
       >
         <span>Scroll to explore</span>
-        <div className="h-6 w-px bg-gradient-to-b from-lime to-transparent" />
+        <div className="h-6 w-px bg-gradient-to-b from-glow to-transparent" />
       </motion.div>
 
       {/* 3D space */}

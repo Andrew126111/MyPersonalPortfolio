@@ -117,7 +117,7 @@ export function Hero() {
             className="group inline-flex items-center gap-2 rounded-full bg-cream py-1 pr-1 pl-5 text-sm font-medium text-black transition-all duration-300 hover:gap-3"
           >
             See my work
-            <span className="flex size-9 items-center justify-center rounded-full bg-black transition-transform duration-300 group-hover:scale-110">
+            <span className="flex size-9 items-center justify-center rounded-full bg-ink transition-transform duration-300 group-hover:scale-110">
               <ArrowRight className="size-4 text-cream" />
             </span>
           </a>
