@@ -33,6 +33,7 @@
   --color-subtle: var(--subtle);
   --color-glow: var(--glow);
   --color-cream: var(--cream);
+  --color-hero-ink: var(--hero-ink);
 
   --font-sans: var(--font-inter);
   --font-heading: var(--font-space-grotesk);
@@ -56,7 +57,8 @@
   --surface-2: #142438;
   --subtle: #3a5371; /* decorative only, never text */
   --glow: #5ee0ff; /* icy cyan accent */
-  --cream: #e1e0cc; /* warm off-white for the hero's big type */
+  --cream: #e1e0cc; /* warm off-white for buttons and headings */
+  --hero-ink: #fbf9ef; /* brighter warm white for the hero name, so it pops off the video */
 
   /* Sky + clouds. Cloud images are neutral grey; they're tinted from --cloud-light (lit
      tops) to --cloud-shadow (undersides). --sky-gradient is the About-section sky (blue

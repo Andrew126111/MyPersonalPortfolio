@@ -2,8 +2,6 @@
 
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { ArrowRight } from "lucide-react";
-import { GitHubIcon, LinkedInIcon } from "@/components/icons";
 import { CloudBank } from "@/components/site/cloud-bank";
 import { VideoRipple } from "@/components/video-ripple";
 import { WordsPullUp } from "@/components/words-pull-up";
@@ -12,9 +10,9 @@ import { site } from "@/lib/site";
 /*
  * Hero: calm, centred layout over the full-bleed twilight video (with its cursor ripples).
  *
- *   - frosted-glass nav pill floating at the top
- *   - name, role, one line of intro, and actions centred in the sky, above the person in
+ *   - big, bright name, role and one line of intro centred in the sky, above the person in
  *     the video, so the scene (and the ripples around it) stays visible
+ *   - a small scroll cue; the site nav (with GitHub/LinkedIn) lives in <Nav>
  *   - a strip of fog along the bottom that rises progressively as you scroll (CloudBank)
  *
  * Scroll: the video zooms and drifts gently, the text lifts and fades, and the fog climbs
@@ -67,77 +65,48 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* frosted-glass nav pill */}
-      <nav aria-label="Primary" className="absolute top-5 left-1/2 z-20 -translate-x-1/2">
-        <FadeUp delay={0.1}>
-          <ul className="flex items-center gap-1 rounded-full border border-white/15 bg-white/10 p-1 shadow-[0_8px_30px_-12px_rgb(0_0_0/0.6)] backdrop-blur-md">
-            {site.nav.map((item) => (
-              <li key={item.href}>
-                <a
-                  href={item.href}
-                  className="block rounded-full px-3 py-1.5 text-xs text-cream/80 transition-colors duration-200 hover:bg-white/10 hover:text-cream sm:px-4 sm:text-sm"
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </FadeUp>
-      </nav>
-
       {/* centred intro, sitting in the sky above the person */}
       <motion.div
         style={{ y: contentY, opacity: contentOpacity }}
-        className="absolute inset-x-0 top-[11vh] flex flex-col items-center px-5 text-center [text-shadow:0_2px_24px_rgb(0_0_0/0.45)] sm:top-[10vh]"
+        className="absolute inset-x-0 top-[12vh] flex flex-col items-center px-5 text-center [text-shadow:0_2px_30px_rgb(0_0_0/0.55)] sm:top-[13vh]"
       >
         <FadeUp delay={0.25}>
-          <p className="font-mono text-[11px] tracking-[0.22em] text-cream/80 uppercase">
+          <p className="font-mono text-xs tracking-[0.24em] text-white/90 uppercase sm:text-sm">
             Software Engineer · Queen&apos;s<span className="hidden sm:inline"> University</span> &apos;28
           </p>
         </FadeUp>
 
-        <h1 className="mt-3 font-heading text-[13vw] leading-[0.95] font-medium tracking-[-0.045em] text-cream sm:text-[8vw] lg:text-[6.6vw]">
+        <h1 className="mt-4 font-heading text-[16vw] leading-[0.9] font-bold tracking-[-0.05em] text-hero-ink drop-shadow-[0_0_40px_rgb(94_224_255/0.25)] sm:text-[10vw] lg:text-[8.6vw]">
           <span className="sr-only">Andrew Nguyen, Software Engineer</span>
           <span aria-hidden="true">
             <WordsPullUp text="Andrew Nguyen" className="justify-center" delay={0.3} />
           </span>
         </h1>
 
-        {/* hidden on phones so the actions stay clear of the person in the video */}
+        {/* hidden on phones so the text stays clear of the person in the video */}
         <FadeUp delay={0.6} className="hidden sm:block">
-          <p className="mt-4 max-w-[46ch] text-sm leading-relaxed text-cream/85 sm:max-w-[64ch] sm:text-base">
+          <p className="mt-6 max-w-[52ch] text-lg leading-relaxed text-white/90 lg:text-xl">
             Computing student building AI products that actually ship: flight booking and
             payment flows, multi-model automation pipelines, and generative media tools.
           </p>
         </FadeUp>
+      </motion.div>
 
-        <FadeUp delay={0.75} className="mt-6 flex items-center gap-3">
+      {/* scroll cue: a light running down a thin line */}
+      <motion.div
+        style={{ opacity: contentOpacity }}
+        className="absolute bottom-[12vh] left-1/2 z-30 -translate-x-1/2 sm:bottom-[13vh]"
+      >
+        <FadeUp delay={1.1}>
           <a
-            href="#projects"
-            className="group inline-flex items-center gap-2 rounded-full bg-cream py-1 pr-1 pl-5 text-sm font-medium text-black transition-all duration-300 hover:gap-3"
+            href="#about"
+            aria-label="Scroll to About"
+            className="flex flex-col items-center gap-3 font-mono text-[11px] tracking-[0.24em] text-white/80 uppercase transition-colors duration-200 [text-shadow:0_1px_12px_rgb(0_0_0/0.5)] hover:text-white"
           >
-            See my work
-            <span className="flex size-9 items-center justify-center rounded-full bg-ink transition-transform duration-300 group-hover:scale-110">
-              <ArrowRight className="size-4 text-cream" />
+            Scroll
+            <span className="relative h-10 w-px overflow-hidden bg-white/25">
+              <span className="absolute inset-x-0 top-0 h-1/2 bg-white motion-safe:animate-[scrollcue_1.8s_ease-in-out_infinite]" />
             </span>
-          </a>
-          <a
-            href={site.links.github}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="GitHub"
-            className="flex size-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-cream/85 backdrop-blur-md transition-colors duration-200 hover:bg-white/20 hover:text-cream"
-          >
-            <GitHubIcon className="size-4" />
-          </a>
-          <a
-            href={site.links.linkedin}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="LinkedIn"
-            className="flex size-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-cream/85 backdrop-blur-md transition-colors duration-200 hover:bg-white/20 hover:text-cream"
-          >
-            <LinkedInIcon className="size-4" />
           </a>
         </FadeUp>
       </motion.div>
