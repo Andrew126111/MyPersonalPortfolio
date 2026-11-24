@@ -16,7 +16,7 @@ export const site = {
   // and repo, so only fill them in if you're happy for them to be public.
   //   email:  e.g. "you@example.com" (shown with a copy button)
   //   resume: e.g. "/resume.pdf" after putting the PDF in /public
-  email: "",
+  email: "ng.andrew2006@gmail.com",
   resume: "",
   links: {
     github: "https://github.com/Andrew126111",
