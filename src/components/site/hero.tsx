@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { GitHubIcon, LinkedInIcon } from "@/components/icons";
+import { CloudBank } from "@/components/site/cloud-bank";
 import { VideoRipple } from "@/components/video-ripple";
 import { WordsPullUp } from "@/components/words-pull-up";
 import { site } from "@/lib/site";
@@ -23,17 +24,18 @@ export function Hero() {
   const reduce = useReducedMotion();
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const frameScale = useTransform(scrollYProgress, [0, 1], [1, reduce ? 1 : 0.9]);
+  const videoScale = useTransform(scrollYProgress, [0, 1], [1, reduce ? 1 : 1.12]);
   const videoY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "10%"]);
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "-12%"]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, reduce ? 1 : 0]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, reduce ? 1 : 0]);
 
   return (
-    <section id="top" ref={ref} className="relative h-svh w-full p-2 sm:p-3">
-      <motion.div
-        style={{ scale: frameScale }}
-        className="relative h-full w-full overflow-hidden rounded-2xl bg-ink md:rounded-[2rem]"
-      >
+    // z-20 so the cloud bank (which overhangs into About) draws above the next section.
+    <section id="top" ref={ref} className="relative z-20 h-svh w-full">
+      {/* full-bleed video layer: edge to edge, no frame. The outer box clips; the inner one
+          zooms, so the zoom can never make the page wider than the screen. */}
+      <div className="absolute inset-0 overflow-hidden bg-ink">
+      <motion.div style={{ scale: videoScale }} className="absolute inset-0">
         {/* background video with cursor ripples (drifts slower than the page).
             Oversized and shifted up so drifting down never reveals an edge. On phones it's
             shifted further up so the person sits above the name instead of behind it. */}
@@ -47,7 +49,11 @@ export function Hero() {
         {/* film grain + readability gradient */}
         <div className="noise-overlay pointer-events-none absolute inset-0 opacity-70 mix-blend-overlay" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/70" />
+      </motion.div>
+      </div>
 
+      {/* foreground: nav + text (outside the zooming video layer so text doesn't scale) */}
+      <div className="absolute inset-0 overflow-hidden">
         {/* tab nav hanging from the top */}
         <nav aria-label="Primary" className="absolute top-0 left-1/2 z-20 -translate-x-1/2">
           <motion.ul
@@ -72,7 +78,8 @@ export function Hero() {
         {/* bottom: giant name + intro */}
         <motion.div
           style={{ y: contentY, opacity: contentOpacity }}
-          className="absolute inset-x-0 bottom-0 px-4 pb-2 sm:px-6 md:px-10"
+          // lifted a little so the resting cloud tops along the bottom edge don't cover it
+          className="absolute inset-x-0 bottom-[6vh] px-4 pb-2 sm:px-6 md:px-10"
         >
           <div className="grid grid-cols-12 items-end gap-4">
             <div className="col-span-12 lg:col-span-8">
@@ -146,7 +153,10 @@ export function Hero() {
             </div>
           </div>
         </motion.div>
-      </motion.div>
+      </div>
+
+      {/* clouds billow up over the bottom of the hero (and its text) and carry you into About */}
+      <CloudBank progress={scrollYProgress} />
     </section>
   );
 }
