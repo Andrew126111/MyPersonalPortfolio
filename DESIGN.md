@@ -58,7 +58,7 @@ Built with **Framer Motion** (`useScroll` / `useTransform`) so all motion shares
 
 ## Section map (draft)
 
-1. **Hero** — inspired by 21st.dev's prisma-hero: looping video (`site.heroVideo`) in a rounded frame with film grain (`.noise-overlay`), black tab nav hanging from the top, giant cream (`--cream: #E1E0CC`) "Andrew*" with words pulling up, cream pill CTA. Scroll parallax: frame shrinks, video drifts, text lifts and fades into the About tunnel. The sticky site nav stays hidden until you scroll past the hero.
+1. **Hero** — inspired by 21st.dev's prisma-hero: looping video (`public/hero.mp4`: demo clip restyled with a twilight grade, mirrored, re-cropped, 0.9 MB) with a WebGL cursor-ripple layer on desktop (`components/video-ripple.tsx`: mouse leaves a wake, click splashes), in a rounded frame with film grain (`.noise-overlay`), black tab nav hanging from the top, giant cream (`--cream: #E1E0CC`) "Andrew*" with words pulling up, cream pill CTA. Scroll parallax: frame shrinks, video drifts, text lifts and fades into the About tunnel. The sticky site nav stays hidden until you scroll past the hero.
 2. **About / skills** — bento grid: Queen's AI, current focus, stack icons.
 3. **Experience** — CoTriplyy, Wayfair (via Extern). Timeline with scroll reveal.
 4. **Projects** — Façade, HeuristX. Interactive cards (flip or tilt) with stack on the back.

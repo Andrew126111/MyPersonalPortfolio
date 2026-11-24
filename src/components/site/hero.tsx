@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { GitHubIcon, LinkedInIcon } from "@/components/icons";
+import { VideoRipple } from "@/components/video-ripple";
 import { WordsPullUp } from "@/components/words-pull-up";
 import { site } from "@/lib/site";
 
@@ -19,16 +20,7 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const reduce = useReducedMotion();
-
-  // Respect reduced motion: keep the first frame as a still image.
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    if (reduce) v.pause();
-    else v.play().catch(() => {});
-  }, [reduce]);
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const frameScale = useTransform(scrollYProgress, [0, 1], [1, reduce ? 1 : 0.9]);
@@ -42,20 +34,15 @@ export function Hero() {
         style={{ scale: frameScale }}
         className="relative h-full w-full overflow-hidden rounded-2xl bg-ink md:rounded-[2rem]"
       >
-        {/* background video (drifts slower than the page) */}
-        <motion.video
-          ref={videoRef}
+        {/* background video with cursor ripples (drifts slower than the page).
+            Oversized and shifted up so drifting down never reveals an edge. On phones it's
+            shifted further up so the person sits above the name instead of behind it. */}
+        <motion.div
           style={{ y: videoY }}
-          // Oversized and shifted up so drifting down never reveals an edge.
-          className="absolute inset-x-0 -top-[15%] h-[130%] w-full object-cover"
-          src={site.heroVideo}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          aria-hidden="true"
-        />
+          className="absolute inset-x-0 -top-[35%] h-[140%] sm:-top-[15%] sm:h-[130%]"
+        >
+          <VideoRipple src={site.heroVideo} poster={site.heroPoster} className="absolute inset-0" />
+        </motion.div>
 
         {/* film grain + readability gradient */}
         <div className="noise-overlay pointer-events-none absolute inset-0 opacity-70 mix-blend-overlay" />
