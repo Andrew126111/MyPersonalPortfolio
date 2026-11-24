@@ -32,6 +32,7 @@
   --color-surface-2: var(--surface-2);
   --color-subtle: var(--subtle);
   --color-lime: var(--lime);
+  --color-cream: var(--cream);
 
   --font-sans: var(--font-inter);
   --font-heading: var(--font-space-grotesk);
@@ -55,6 +56,7 @@
   --surface-2: #1c1c1f;
   --subtle: #5c5c61; /* decorative only, never text */
   --lime: #c8f560;
+  --cream: #e1e0cc; /* warm off-white for the hero's big type */
 
   --primary: var(--lime);
   --primary-foreground: #0a0a0b;
@@ -100,6 +102,12 @@
     background: var(--lime);
     color: #0a0a0b;
   }
+}
+
+/* Film grain: an SVG noise texture, blended over video/imagery. */
+.noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 1.4 -0.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
 }
 
 @keyframes scrollcue {

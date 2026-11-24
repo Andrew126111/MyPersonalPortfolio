@@ -58,7 +58,7 @@ Built with **Framer Motion** (`useScroll` / `useTransform`) so all motion shares
 
 ## Section map (draft)
 
-1. **Hero** — "caustics" background: soft grey pool-floor light (WebGL shader, `components/backgrounds/caustics.tsx`); the cursor acts as a lens that magnifies it and tints it lime. Plus scroll + pointer parallax, floating stack chips (lg+), text-scramble headline, lime CTA.
+1. **Hero** — inspired by 21st.dev's prisma-hero: looping video (`site.heroVideo`) in a rounded frame with film grain (`.noise-overlay`), black tab nav hanging from the top, giant cream (`--cream: #E1E0CC`) "Andrew*" with words pulling up, cream pill CTA. Scroll parallax: frame shrinks, video drifts, text lifts and fades into the About tunnel. The sticky site nav stays hidden until you scroll past the hero.
 2. **About / skills** — bento grid: Queen's AI, current focus, stack icons.
 3. **Experience** — CoTriplyy, Wayfair (via Extern). Timeline with scroll reveal.
 4. **Projects** — Façade, HeuristX. Interactive cards (flip or tilt) with stack on the back.
