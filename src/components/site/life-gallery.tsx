@@ -131,7 +131,7 @@ function LifeArc() {
 
   // ── geometry ──
   const mobile = size.w < 768;
-  const W = mobile ? 150 : 220; // card width (3:4 portrait)
+  const W = mobile ? 185 : Math.min(290, Math.max(240, size.h * 0.34)); // card width (3:4 portrait)
   const H = Math.round((W * 4) / 3);
   const R = Math.max(size.w * (mobile ? 1.7 : 1.1), 820); // arc radius
   // Arc top, relative to stage centre. Nudged up just enough that photo + caption sit centred.
@@ -299,7 +299,7 @@ function LifeArc() {
                   src={photo.src}
                   alt={photo.alt}
                   fill
-                  sizes="(max-width: 768px) 150px, 220px"
+                  sizes="(max-width: 768px) 185px, 290px"
                   style={{ objectPosition: photo.focus }}
                   className={cn(
                     "object-cover transition-[filter] duration-500",
