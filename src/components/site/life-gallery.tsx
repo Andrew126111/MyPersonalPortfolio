@@ -84,6 +84,8 @@ function LifeArc() {
   const tunnelRaw = useTransform(scrollYProgress, [0, T], [0, 1]);
   const tunnelS = useSpring(tunnelRaw, { stiffness: 80, damping: 30, restDelta: 0.0001 });
   const arcP = useTransform(scrollYProgress, [T, 1], [0, 1]);
+  // photo backdrop fades away once the last photo has dwelled, before the stage unpins
+  const backdropFade = useTransform(arcP, [TRAVEL[1] + 0.005, 1], [1, 0]);
 
   // Intro: photos go scatter → line → circle when the tunnel nears its end,
   // and reset if you scroll back up into the tunnel.
@@ -214,36 +216,45 @@ function LifeArc() {
       style={{ height: `calc(100svh + ${Math.round(TUNNEL_SCROLL + ARC_SCROLL)}svh)` }}
     >
       <div ref={stageRef} className="sticky top-0 h-svh overflow-hidden">
-        {/* backdrop: the active photo, blurred and dimmed across the whole stage. Each one
-            crossfades into the next as you move along the arc. */}
-        <AnimatePresence>
-          {active >= 0 && (
-            <motion.div
-              key={LIFE[active].src}
-              aria-hidden="true"
-              initial={{ opacity: 0, scale: 1.06 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute inset-0"
-            >
-              <Image
-                src={LIFE[active].src}
-                alt=""
-                fill
-                sizes="640px"
-                style={{ objectPosition: LIFE[active].focus }}
-                className="scale-105 object-cover blur-[4px] saturate-[1.15]"
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-        {/* keeps the backdrop moody and the caption readable; fades with it */}
-        <div
+        {/* Backdrop group. It fades out over the last stretch of scroll (after the final photo
+            has had its moment), and its bottom edge is feathered, so when the stage unpins
+            there's no hard line between the photo and the sky below. */}
+        <motion.div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgb(7_17_31/0.3),rgb(7_17_31/0.65))] transition-opacity duration-700"
-          style={{ opacity: active >= 0 ? 1 : 0 }}
-        />
+          className="pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black_80%,transparent)]"
+          style={{ opacity: backdropFade }}
+        >
+          {/* backdrop: the active photo, blurred and dimmed across the whole stage. Each one
+              crossfades into the next as you move along the arc. */}
+          <AnimatePresence>
+            {active >= 0 && (
+              <motion.div
+                key={LIFE[active].src}
+                aria-hidden="true"
+                initial={{ opacity: 0, scale: 1.06 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={LIFE[active].src}
+                  alt=""
+                  fill
+                  sizes="640px"
+                  style={{ objectPosition: LIFE[active].focus }}
+                  className="scale-105 object-cover blur-[4px] saturate-[1.15]"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          {/* keeps the backdrop moody and the caption readable; fades with it */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgb(7_17_31/0.3),rgb(7_17_31/0.65))] transition-opacity duration-700"
+            style={{ opacity: active >= 0 ? 1 : 0 }}
+          />
+        </motion.div>
 
         {/* 1. tunnel fly-through (fades out as the circle forms) */}
         <TunnelLayer progress={tunnelS} stage={size} photos={LIFE} />
