@@ -10,7 +10,7 @@ import { site } from "@/lib/site";
 /*
  * Hero: calm, centred layout over the full-bleed twilight video (with its cursor ripples).
  *
- *   - big, bright name, role and one line of intro centred in the sky, above the person in
+ *   - big, bright name and role centred in the sky (the intro lives in About), above the person in
  *     the video, so the scene (and the ripples around it) stays visible
  *   - a calm scroll cue (outlined mouse, slow rolling wheel, gentle float); the site nav (with GitHub/LinkedIn) lives in <Nav>
  *   - a strip of fog along the bottom that rises progressively as you scroll (CloudBank)
@@ -82,14 +82,6 @@ export function Hero() {
             <WordsPullUp text="Andrew Nguyen" className="justify-center" delay={0.3} />
           </span>
         </h1>
-
-        {/* hidden on phones so the text stays clear of the person in the video */}
-        <FadeUp delay={0.6} className="hidden sm:block">
-          <p className="mt-6 max-w-[52ch] text-lg leading-relaxed text-white/90 lg:text-xl">
-            Computing student building AI products that actually ship: flight booking and
-            payment flows, multi-model automation pipelines, and generative media tools.
-          </p>
-        </FadeUp>
       </motion.div>
 
       {/* scroll cue: understated but easy to spot. A plain white "mouse" whose wheel slowly
