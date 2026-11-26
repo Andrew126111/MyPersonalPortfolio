@@ -23,8 +23,9 @@ import { cn } from "@/lib/utils";
  *   1. Tunnel: "HI, I'M ANDREW." with your photos flying toward you out of the distance.
  *   2. As the tunnel fades out, the photos line up, then form a circle.
  *   3. Scrolling morphs the circle into a big arc across the screen.
- *   4. Further scrolling slides photos along the arc; the photo at the top is "active" and its
- *      caption shows below it. Clicking any photo scrolls straight to it.
+ *   4. Further scrolling slides photos along the arc; the photo at the top is "active": its
+ *      caption shows below it and a blurred copy fills the background. Clicking any photo
+ *      scrolls straight to it.
  *
  * Unlike the original, this never hijacks the mouse wheel: a tall wrapper with a sticky
  * stage turns normal page scroll into progress, so visitors can always scroll past.
@@ -213,6 +214,37 @@ function LifeArc() {
       style={{ height: `calc(100svh + ${Math.round(TUNNEL_SCROLL + ARC_SCROLL)}svh)` }}
     >
       <div ref={stageRef} className="sticky top-0 h-svh overflow-hidden">
+        {/* backdrop: the active photo, blurred and dimmed across the whole stage. Each one
+            crossfades into the next as you move along the arc. */}
+        <AnimatePresence>
+          {active >= 0 && (
+            <motion.div
+              key={LIFE[active].src}
+              aria-hidden="true"
+              initial={{ opacity: 0, scale: 1.06 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={LIFE[active].src}
+                alt=""
+                fill
+                sizes="640px"
+                style={{ objectPosition: LIFE[active].focus }}
+                className="scale-110 object-cover blur-lg saturate-[1.2]"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {/* keeps the backdrop moody and the caption readable; fades with it */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgb(7_17_31/0.3),rgb(7_17_31/0.65))] transition-opacity duration-700"
+          style={{ opacity: active >= 0 ? 1 : 0 }}
+        />
+
         {/* 1. tunnel fly-through (fades out as the circle forms) */}
         <TunnelLayer progress={tunnelS} stage={size} photos={LIFE} />
 
@@ -252,7 +284,7 @@ function LifeArc() {
                   hidden && "pointer-events-none",
                   "shadow-[0_24px_48px_-24px_rgb(0_0_0/0.9)] transition-[border-color,box-shadow] duration-300",
                   isActive
-                    ? "border-glow shadow-[0_0_0_1px_var(--glow),0_24px_60px_-20px_rgb(200_245_96/0.35)]"
+                    ? "border-glow shadow-[0_0_0_1px_var(--glow),0_24px_60px_-20px_rgb(94_224_255/0.35)]"
                     : "border-border hover:border-muted-foreground",
                 )}
                 style={{
@@ -301,7 +333,7 @@ function LifeArc() {
                 <p className="mt-2 font-heading text-xl font-bold sm:text-2xl">
                   {LIFE[active].title}
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground sm:text-base">
+                <p className="mt-1 text-sm text-white/85 sm:text-base">
                   {LIFE[active].caption}
                 </p>
               </motion.div>
