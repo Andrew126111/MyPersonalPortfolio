@@ -7,8 +7,9 @@ export const site = {
   // Footer copyright year (static, so the page can be prerendered).
   year: 2026,
   school: "Queen's University",
-  // Hero background video, self-hosted in /public. It's the 21st.dev prisma-hero demo clip,
-  // restyled (mirrored, re-cropped, twilight colour grade) and compressed from 16 MB to 0.9 MB.
+  // Hero background video, self-hosted in /public: me on a hilltop above the
+  // Toronto skyline at sunset, composited from two shots and turned into a 12 s two-layer
+  // parallax loop (skyline + me as separate layers), lightly graded, ~1.1 MB.
   // Must stay same-origin: the WebGL ripple uses it as a texture.
   heroVideo: "/hero.mp4",
   heroPoster: "/hero-poster.jpg",

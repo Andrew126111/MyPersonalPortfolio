@@ -69,6 +69,7 @@ uniform sampler2D u_video;
 uniform vec2 u_res;
 uniform vec2 u_simSize;
 uniform float u_videoAspect;
+uniform vec2 u_focus; // like CSS object-position, 0..1 (y measured from the bottom here)
 out vec4 outColor;
 
 const vec3 CREAM = vec3(0.882, 0.878, 0.8);
@@ -76,8 +77,13 @@ const vec3 CREAM = vec3(0.882, 0.878, 0.8);
 // Map screen uv to video uv like CSS object-fit: cover.
 vec2 cover(vec2 uv) {
   float ca = u_res.x / u_res.y;
-  if (ca > u_videoAspect) uv.y = (uv.y - 0.5) * (u_videoAspect / ca) + 0.5;
-  else uv.x = (uv.x - 0.5) * (ca / u_videoAspect) + 0.5;
+  if (ca > u_videoAspect) {
+    float k = u_videoAspect / ca; // visible fraction of the video's height
+    uv.y = uv.y * k + u_focus.y * (1.0 - k);
+  } else {
+    float k = ca / u_videoAspect; // visible fraction of the video's width
+    uv.x = uv.x * k + u_focus.x * (1.0 - k);
+  }
   return uv;
 }
 
@@ -155,7 +161,18 @@ function makeTexture(gl: WebGL2RenderingContext) {
   return tex;
 }
 
-export function VideoRipple({ src, poster, className }: { src: string; poster?: string; className?: string }) {
+export function VideoRipple({
+  src,
+  poster,
+  className,
+  focus = { x: 0.5, y: 0.5 },
+}: {
+  src: string;
+  poster?: string;
+  className?: string;
+  /** Which part of the video stays in frame when it's cropped (0..1, like object-position). */
+  focus?: { x: number; y: number };
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reduce = useReducedMotion();
@@ -323,6 +340,7 @@ export function VideoRipple({ src, poster, className }: { src: string; poster?: 
       gl.uniform2f(s.render.u("u_res"), canvas.width, canvas.height);
       gl.uniform2f(s.render.u("u_simSize"), s.w, s.h);
       gl.uniform1f(s.render.u("u_videoAspect"), video.videoWidth / video.videoHeight);
+      gl.uniform2f(s.render.u("u_focus"), focus.x, 1 - focus.y); // texture y runs bottom-up
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     },
     reduce,
@@ -341,6 +359,7 @@ export function VideoRipple({ src, poster, className }: { src: string; poster?: 
         preload="auto"
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover"
+        style={{ objectPosition: `${focus.x * 100}% ${focus.y * 100}%` }}
       />
       <canvas
         ref={canvasRef}

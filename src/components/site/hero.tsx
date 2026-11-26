@@ -20,6 +20,10 @@ import { site } from "@/lib/site";
  */
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+// Which part of the (portrait) video stays in frame. x matters on phones, where the sides are
+// cropped: 0.72 keeps the CN Tower and me both in. y matters on wide screens, where the top and
+// bottom are cropped: 0.64 shows me from the shoulders up and keeps the skyline just under the name.
+const HERO_FOCUS = { x: 0.72, y: 0.64 };
 
 function FadeUp({ delay, children, className }: { delay: number; children: React.ReactNode; className?: string }) {
   const reduce = useReducedMotion();
@@ -57,7 +61,7 @@ export function Hero() {
             style={{ y: videoY }}
             className="absolute inset-x-0 -top-[22%] h-[135%] sm:-top-[15%] sm:h-[130%]"
           >
-            <VideoRipple src={site.heroVideo} poster={site.heroPoster} className="absolute inset-0" />
+            <VideoRipple src={site.heroVideo} poster={site.heroPoster} focus={HERO_FOCUS} className="absolute inset-0" />
           </motion.div>
           {/* film grain + a darker sky at the top so the centred text reads clearly */}
           <div className="noise-overlay pointer-events-none absolute inset-0 opacity-60 mix-blend-overlay" />
@@ -76,7 +80,7 @@ export function Hero() {
           </p>
         </FadeUp>
 
-        <h1 className="mt-4 font-heading text-[16vw] leading-[0.9] font-bold tracking-[-0.05em] text-hero-ink drop-shadow-[0_0_40px_rgb(94_224_255/0.25)] sm:text-[10vw] lg:text-[8.6vw]">
+        <h1 className="mt-4 font-heading text-[16vw] leading-[0.9] font-bold tracking-[-0.05em] text-hero-ink [text-shadow:none] [filter:drop-shadow(0_2px_18px_rgb(0_0_0/0.45))_drop-shadow(0_0_40px_rgb(94_224_255/0.25))] sm:text-[10vw] lg:text-[8.6vw]">
           <span className="sr-only">Andrew Nguyen, Software Engineer</span>
           <span aria-hidden="true">
             <WordsPullUp text="Andrew Nguyen" className="justify-center" delay={0.3} />
