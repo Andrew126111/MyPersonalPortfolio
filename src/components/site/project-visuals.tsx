@@ -9,15 +9,19 @@ import { Depth } from "@/components/tilt-card";
  * Swap these for real screenshots later if you like.
  */
 
-const dots = {
-  backgroundImage: "radial-gradient(var(--subtle) 1px, transparent 1px)",
-  backgroundSize: "22px 22px",
-};
+/** Soft light pooled behind each device, so it glows against the night sky instead of sitting in a box. */
+function Halo() {
+  return (
+    <Depth depth={4} className="pointer-events-none absolute inset-0">
+      <div className="absolute inset-[12%] rounded-full bg-[radial-gradient(closest-side,rgb(94_224_255/0.16),transparent)] blur-2xl" />
+    </Depth>
+  );
+}
 
 function Chip({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div
-      className={`flex items-center gap-2 rounded-full border border-border bg-surface/90 px-3 py-1.5 font-mono text-[11px] text-muted-foreground shadow-[0_12px_30px_-12px_rgb(0_0_0/0.9)] backdrop-blur-sm ${className}`}
+      className={`flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.06] px-3 py-1.5 font-mono text-[11px] text-foreground/85 shadow-[0_12px_30px_-12px_rgb(0_0_0/0.8)] backdrop-blur-md ${className}`}
     >
       {children}
     </div>
@@ -38,13 +42,11 @@ function LiveDot() {
 export function FacadeVisual() {
   return (
     <div className="relative h-full w-full" aria-hidden="true">
-      <Depth depth={6} className="absolute inset-0 opacity-40" style={dots}>
-        <span />
-      </Depth>
+      <Halo />
 
       {/* phone with an Instagram-style post */}
       <Depth depth={16} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        <div className="w-[176px] scale-[0.82] rounded-[28px] border border-border bg-ink p-2.5 shadow-[0_30px_60px_-24px_rgb(0_0_0/0.9)] sm:scale-100">
+        <div className="w-[176px] scale-[0.82] sm:scale-100 lg:scale-[1.15] rounded-[28px] border border-white/15 bg-ink p-2.5 shadow-[0_30px_70px_-20px_rgb(0_0_0/0.9),0_0_40px_-12px_rgb(94_224_255/0.25)]">
           <div className="flex items-center gap-2 px-1 pb-2">
             <span className="size-6 rounded-full border-2 border-glow bg-surface-2" />
             <div>
@@ -79,7 +81,7 @@ export function FacadeVisual() {
         </Chip>
       </Depth>
       <Depth depth={28} className="absolute top-[46%] right-[4%] sm:right-[8%]">
-        <div className="w-[150px] rounded-xl border border-border bg-surface/90 p-3 shadow-[0_12px_30px_-12px_rgb(0_0_0/0.9)] backdrop-blur-sm">
+        <div className="w-[150px] rounded-xl border border-white/12 bg-white/[0.06] p-3 shadow-[0_12px_30px_-12px_rgb(0_0_0/0.8)] backdrop-blur-md">
           <p className="font-mono text-[10px] text-muted-foreground">Veo 3 · rendering reel</p>
           <div className="mt-2 h-1 overflow-hidden rounded-full bg-surface-2">
             <div className="h-full w-[68%] rounded-full bg-glow" />
@@ -155,16 +157,14 @@ function Chart() {
 export function HeuristXVisual() {
   return (
     <div className="relative h-full w-full" aria-hidden="true">
-      <Depth depth={6} className="absolute inset-0 opacity-40" style={dots}>
-        <span />
-      </Depth>
+      <Halo />
 
       {/* browser window with a trading chart */}
       <Depth
         depth={12}
         className="absolute inset-x-[6%] top-[12%] bottom-[12%] sm:inset-x-[8%]"
       >
-        <div className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-ink shadow-[0_30px_60px_-24px_rgb(0_0_0/0.9)]">
+        <div className="flex h-full flex-col overflow-hidden rounded-xl border border-white/15 bg-ink shadow-[0_30px_70px_-20px_rgb(0_0_0/0.9),0_0_48px_-14px_rgb(94_224_255/0.25)]">
           <div className="flex items-center gap-1.5 border-b border-border px-3 py-2">
             <span className="size-2 rounded-full bg-surface-2" />
             <span className="size-2 rounded-full bg-surface-2" />
@@ -188,7 +188,7 @@ export function HeuristXVisual() {
 
       {/* injected intervention overlay */}
       <Depth depth={30} className="absolute right-[3%] bottom-[6%] sm:right-[5%]">
-        <div className="w-[210px] rounded-xl border border-glow/40 bg-surface/95 p-3 shadow-[0_20px_50px_-16px_rgb(0_0_0/0.95)] backdrop-blur-sm">
+        <div className="w-[210px] rounded-xl border border-glow/40 bg-ink/85 p-3 shadow-[0_20px_50px_-16px_rgb(0_0_0/0.95)] backdrop-blur-md">
           <p className="flex items-center gap-1.5 font-mono text-[10px] text-glow">
             <ShieldAlert className="size-3" /> HeuristX
           </p>

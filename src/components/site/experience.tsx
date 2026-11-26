@@ -2,8 +2,9 @@
 
 import { useRef, useSyncExternalStore } from "react";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
-import { ChevronDown, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { CountUp } from "@/components/count-up";
+import { PointList, ToolsLine } from "@/components/site/detail-list";
 import { FlightVisual, PipelineVisual } from "@/components/site/experience-visuals";
 import { SectionHeading } from "@/components/site/section-heading";
 import { ROLES, type Role } from "@/content/experience";
@@ -27,15 +28,6 @@ function useIsDesktop() {
     },
     () => window.matchMedia("(min-width: 1024px)").matches,
     () => false,
-  );
-}
-
-function Point({ text }: { text: string }) {
-  return (
-    <li className="flex gap-3 text-[15px] leading-relaxed text-muted-foreground">
-      <span className="mt-2.5 size-1 shrink-0 rounded-full bg-glow" aria-hidden="true" />
-      {text}
-    </li>
   );
 }
 
@@ -97,32 +89,8 @@ function RoleRow({ role, index }: { role: Role; index: number }) {
             ))}
           </dl>
 
-          {/* two headline points; the rest tuck behind "More details" */}
-          <ul className="mt-7 space-y-3">
-            {role.points.slice(0, 2).map((p) => (
-              <Point key={p} text={p} />
-            ))}
-          </ul>
-          {role.points.length > 2 && (
-            <details className="group mt-3">
-              <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 font-mono text-xs text-glow/90 transition-colors hover:text-glow [&::-webkit-details-marker]:hidden">
-                <span className="group-open:hidden">More details</span>
-                <span className="hidden group-open:inline">Less</span>
-                <ChevronDown className="size-3.5 transition-transform duration-300 group-open:rotate-180" aria-hidden="true" />
-              </summary>
-              <ul className="mt-3 space-y-3">
-                {role.points.slice(2).map((p) => (
-                  <Point key={p} text={p} />
-                ))}
-              </ul>
-            </details>
-          )}
-
-          {/* tools, as a quiet line */}
-          <p className="mt-6 font-mono text-[11px] leading-relaxed text-muted-foreground/80">
-            <span className="sr-only">Tools used: </span>
-            {role.stack.join("  ·  ")}
-          </p>
+          <PointList points={role.points} />
+          <ToolsLine tools={role.stack} />
         </motion.div>
 
         {/* scroll-driven illustration; sticks beside the text on desktop while you read */}

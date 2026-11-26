@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { GitHubIcon } from "@/components/icons";
+import { PointList, ToolsLine } from "@/components/site/detail-list";
 import { FacadeVisual, HeuristXVisual } from "@/components/site/project-visuals";
 import { SectionHeading } from "@/components/site/section-heading";
 import { TiltCard } from "@/components/tilt-card";
@@ -32,32 +33,15 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
 
       <div className={cn(flip && "lg:order-1")}>
         <p className="font-mono text-xs text-muted-foreground">
-          <span className="text-glow">{String(index + 1).padStart(2, "0")}</span> · {project.date}
+          <span className="text-glow">{project.date}</span>
         </p>
         <h3 id={`project-${index}`} className="mt-3 text-3xl font-bold sm:text-4xl">
           {project.name}
         </h3>
-        <p className="mt-3 text-[17px] leading-relaxed text-foreground/90">{project.tagline}</p>
+        <p className="mt-4 text-[17px] leading-relaxed text-muted-foreground">{project.tagline}</p>
 
-        <ul className="mt-6 space-y-3">
-          {project.points.map((point) => (
-            <li key={point} className="flex gap-3 text-sm leading-relaxed text-muted-foreground">
-              <span className="mt-2 size-1 shrink-0 rounded-full bg-glow" aria-hidden="true" />
-              {point}
-            </li>
-          ))}
-        </ul>
-
-        <ul className="mt-6 flex flex-wrap gap-2" aria-label="Tech stack">
-          {project.stack.map((tech) => (
-            <li
-              key={tech}
-              className="rounded-full border border-border bg-surface px-3 py-1 font-mono text-[11px] text-muted-foreground"
-            >
-              {tech}
-            </li>
-          ))}
-        </ul>
+        <PointList points={project.points} />
+        <ToolsLine tools={project.stack} label="Built with" />
 
         {(project.links?.github || project.links?.demo) && (
           <div className="mt-7 flex flex-wrap gap-3">
@@ -76,7 +60,7 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
                 href={project.links.github}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-foreground transition-colors duration-200 hover:border-glow hover:text-glow"
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 text-sm text-foreground backdrop-blur-md transition-colors duration-200 hover:border-glow hover:text-glow"
               >
                 <GitHubIcon className="size-4" /> Source
               </a>

@@ -3,7 +3,6 @@
 import { createContext, useContext, useRef } from "react";
 import {
   motion,
-  useMotionTemplate,
   useMotionValue,
   useReducedMotion,
   useSpring,
@@ -13,9 +12,9 @@ import {
 import { cn } from "@/lib/utils";
 
 /*
- * A card that tilts in 3D toward the cursor, with a soft glare that follows it.
- * Children wrapped in <Depth> shift by different amounts, giving a parallax effect
- * inside the card (things "closer" to you move more).
+ * A frameless stage that tilts in 3D toward the cursor. Children wrapped in <Depth> shift by
+ * different amounts, giving a parallax effect (things "closer" to you move more). There's no
+ * box: what's inside floats straight on the page's sky.
  *
  * Mouse only; touch and reduced-motion users get a flat card.
  */
@@ -37,9 +36,6 @@ export function TiltCard({ className, children }: { className?: string; children
 
   const rotateY = useTransform(px, (v) => v * MAX_TILT * 2);
   const rotateX = useTransform(py, (v) => -v * MAX_TILT * 2);
-  const glareX = useTransform(px, (v) => `${(v + 0.5) * 100}%`);
-  const glareY = useTransform(py, (v) => `${(v + 0.5) * 100}%`);
-  const glare = useMotionTemplate`radial-gradient(500px circle at ${glareX} ${glareY}, rgb(255 255 255 / 0.06), transparent 50%)`;
 
   function onPointerMove(e: React.PointerEvent<HTMLDivElement>) {
     if (reduce || e.pointerType !== "mouse" || !ref.current) return;
@@ -60,14 +56,9 @@ export function TiltCard({ className, children }: { className?: string; children
           onPointerMove={onPointerMove}
           onPointerLeave={onPointerLeave}
           style={reduce ? undefined : { rotateX, rotateY, transformStyle: "preserve-3d" }}
-          className="group relative h-full w-full overflow-hidden rounded-2xl border border-border bg-card transition-colors duration-300 hover:border-muted-foreground/40"
+          className="relative h-full w-full"
         >
           {children}
-          <motion.div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-            style={{ background: glare }}
-          />
         </motion.div>
       </div>
     </TiltContext.Provider>
