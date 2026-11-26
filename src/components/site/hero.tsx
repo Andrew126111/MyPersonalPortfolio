@@ -61,7 +61,10 @@ export function Hero() {
             style={{ y: videoY }}
             className="absolute inset-x-0 -top-[22%] h-[135%] sm:-top-[15%] sm:h-[130%]"
           >
-            <VideoRipple src={site.heroVideo} poster={site.heroPoster} focus={HERO_FOCUS} className="absolute inset-0" />
+            {/* slow, endless camera drift so the still feels alive */}
+            <div className="absolute inset-0 motion-safe:animate-[hero-drift_26s_ease-in-out_infinite_alternate]">
+              <VideoRipple src={site.heroMedia} focus={HERO_FOCUS} className="absolute inset-0" />
+            </div>
           </motion.div>
           {/* film grain + a darker sky at the top so the centred text reads clearly */}
           <div className="noise-overlay pointer-events-none absolute inset-0 opacity-60 mix-blend-overlay" />

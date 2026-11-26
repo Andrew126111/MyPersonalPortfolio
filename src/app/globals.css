@@ -149,6 +149,12 @@
   50% { opacity: 1; }
 }
 
+/* Hero: a slow camera drift over the background still (runs alternate, so it never jumps). */
+@keyframes hero-drift {
+  from { transform: scale(1.01) translate(0, 0); }
+  to { transform: scale(1.045) translate(-0.8%, 0.4%); }
+}
+
 /* About: the stack row slides left by one full copy of itself, then loops. */
 @keyframes marquee {
   to { transform: translateX(-50%); }

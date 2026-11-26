@@ -161,6 +161,17 @@ function makeTexture(gl: WebGL2RenderingContext) {
   return tex;
 }
 
+type Media = HTMLVideoElement | HTMLImageElement;
+const isImageSrc = (src: string) => /\.(webp|jpe?g|png|avif)$/i.test(src);
+const mediaReady = (m: Media) =>
+  m instanceof HTMLVideoElement ? m.readyState >= 2 : m.complete && m.naturalWidth > 0;
+const mediaAspect = (m: Media) =>
+  m instanceof HTMLVideoElement ? m.videoWidth / m.videoHeight : m.naturalWidth / m.naturalHeight;
+
+/**
+ * Full-bleed background (a video, or a still image) with water-like cursor ripples on
+ * desktop. A still is uploaded to the GPU once; a video is re-uploaded every frame.
+ */
 export function VideoRipple({
   src,
   poster,
@@ -170,10 +181,12 @@ export function VideoRipple({
   src: string;
   poster?: string;
   className?: string;
-  /** Which part of the video stays in frame when it's cropped (0..1, like object-position). */
+  /** Which part of the media stays in frame when it's cropped (0..1, like object-position). */
   focus?: { x: number; y: number };
 }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const image = isImageSrc(src);
+  const videoRef = useRef<Media>(null);
+  const uploaded = useRef(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reduce = useReducedMotion();
   const pointer = usePointer(canvasRef);
@@ -184,7 +197,7 @@ export function VideoRipple({
   // Play / pause with the reduced-motion preference.
   useEffect(() => {
     const v = videoRef.current;
-    if (!v) return;
+    if (!(v instanceof HTMLVideoElement)) return;
     if (reduce) v.pause();
     else v.play().catch(() => {});
   }, [reduce]);
@@ -220,6 +233,7 @@ export function VideoRipple({
       read: 0,
     };
 
+    uploaded.current = false;
     // Canvas takes over drawing; keep the video playing underneath as the texture source.
     canvas.style.opacity = "1";
     video.style.opacity = "0";
@@ -257,7 +271,7 @@ export function VideoRipple({
       const canvas = canvasRef.current;
       const video = videoRef.current;
       const s = glRef.current;
-      if (!canvas || !video || !s || video.readyState < 2) return;
+      if (!canvas || !video || !s || !mediaReady(video)) return;
       const { gl } = s;
       fitCanvas(canvas, 1.5);
 
@@ -323,12 +337,15 @@ export function VideoRipple({
       pass(s.update, () => {});
       pass(s.update, () => {});
 
-      // Upload the current video frame and draw.
+      // Upload the current frame (a still only once) and draw.
       gl.activeTexture(gl.TEXTURE1);
       gl.bindTexture(gl.TEXTURE_2D, s.videoTex);
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+      if (!image || !uploaded.current) {
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        uploaded.current = true;
+      }
 
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       gl.viewport(0, 0, canvas.width, canvas.height);
@@ -339,7 +356,7 @@ export function VideoRipple({
       gl.uniform1i(s.render.u("u_video"), 1);
       gl.uniform2f(s.render.u("u_res"), canvas.width, canvas.height);
       gl.uniform2f(s.render.u("u_simSize"), s.w, s.h);
-      gl.uniform1f(s.render.u("u_videoAspect"), video.videoWidth / video.videoHeight);
+      gl.uniform1f(s.render.u("u_videoAspect"), mediaAspect(video));
       gl.uniform2f(s.render.u("u_focus"), focus.x, 1 - focus.y); // texture y runs bottom-up
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     },
@@ -348,19 +365,33 @@ export function VideoRipple({
 
   return (
     <div className={className}>
-      <video
-        ref={videoRef}
-        src={src}
-        poster={poster}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover"
-        style={{ objectPosition: `${focus.x * 100}% ${focus.y * 100}%` }}
-      />
+      {image ? (
+        // eslint-disable-next-line @next/next/no-img-element -- also the WebGL texture source, so it must be a plain same-origin <img>
+        <img
+          ref={videoRef as React.RefObject<HTMLImageElement>}
+          src={src}
+          alt=""
+          aria-hidden="true"
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ objectPosition: `${focus.x * 100}% ${focus.y * 100}%` }}
+        />
+      ) : (
+        <video
+          ref={videoRef as React.RefObject<HTMLVideoElement>}
+          src={src}
+          poster={poster}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ objectPosition: `${focus.x * 100}% ${focus.y * 100}%` }}
+        />
+      )}
       <canvas
         ref={canvasRef}
         aria-hidden="true"

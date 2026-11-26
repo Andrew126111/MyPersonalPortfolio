@@ -7,12 +7,11 @@ export const site = {
   // Footer copyright year (static, so the page can be prerendered).
   year: 2026,
   school: "Queen's University",
-  // Hero background video, self-hosted in /public: me on a hilltop above the
-  // Toronto skyline at sunset, composited from two shots and turned into a 12 s two-layer
-  // parallax loop (skyline + me as separate layers), lightly graded, ~1.1 MB.
+  // Hero background: me on a hilltop above the Toronto skyline at sunset. Two photos
+  // composited (clean skyline shot + me cut out of a second one, hair matted by hand),
+  // sharpened, lightly graded. A still (sharp, ~480 KB); the hero adds a slow camera drift.
   // Must stay same-origin: the WebGL ripple uses it as a texture.
-  heroVideo: "/hero.mp4",
-  heroPoster: "/hero-poster.jpg",
+  heroMedia: "/hero.webp",
   // Contact extras. Leave empty to hide the card. Both get published on the public site
   // and repo, so only fill them in if you're happy for them to be public.
   //   email:  e.g. "you@example.com" (shown with a copy button)
