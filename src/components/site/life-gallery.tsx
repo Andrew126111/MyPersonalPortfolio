@@ -268,6 +268,7 @@ function LifeArc() {
                   alt={photo.alt}
                   fill
                   sizes="(max-width: 768px) 150px, 220px"
+                  style={{ objectPosition: photo.focus }}
                   className={cn(
                     "object-cover transition-[filter] duration-500",
                     isActive ? "grayscale-0" : "grayscale-[35%]",
@@ -332,7 +333,7 @@ function LifeGridPhotos() {
       {LIFE.map((photo: LifePhoto) => (
         <figure key={photo.src}>
           <div className="relative aspect-[3/4] overflow-hidden rounded-xl border border-border">
-            <Image src={photo.src} alt={photo.alt} fill sizes="300px" className="object-cover" />
+            <Image src={photo.src} alt={photo.alt} fill sizes="300px" className="object-cover" style={{ objectPosition: photo.focus }} />
           </div>
           <figcaption className="mt-3">
             <p className="font-heading font-bold">{photo.title}</p>

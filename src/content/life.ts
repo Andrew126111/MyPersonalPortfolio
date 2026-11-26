@@ -1,37 +1,90 @@
 /**
  * Photos for the "life outside the terminal" gallery in the About section.
  *
- * To use your own photos:
- *   1. Put the image files in /public/life/ (e.g. /public/life/hiking.jpg). Portrait (3:4) crops best.
- *   2. Replace each entry below: src "/life/hiking.jpg", a short title, a one-line caption,
+ * To add or swap a photo:
+ *   1. Put the image in /public/life/ (portrait 3:4 crops best; ~900px tall is plenty).
+ *      Strip location metadata first. Phone photos often carry GPS coordinates.
+ *   2. Add an entry below: src "/life/name.jpg", a short title, a one-line caption,
  *      and alt text describing what's in the photo (for screen readers).
+ *   3. Optional `focus` sets which part stays in frame when the photo is cropped
+ *      (CSS object-position, e.g. "50% 70%" keeps the lower middle). Default is centre.
  *
- * Any number of photos works; 8–12 feels best.
- * The placeholders below are stock images from the 21st.dev demo.
+ * Order matters: the first photo leads the tunnel next to "HI, I'M ANDREW."
+ * 8–12 photos feels best.
  */
 export type LifePhoto = {
   src: string;
   title: string;
   caption: string;
   alt: string;
+  focus?: string;
 };
 
-const CDN = "https://cdn.21st.dev/assets/mirror";
-
 export const LIFE: LifePhoto[] = [
-  `${CDN}/4d/4d1bff4ea8b9f400dff7ae405f92e15bd39ec76e9285c7d96017e64ba1de3ae1.jpg`,
-  `${CDN}/ee/ee36e332fe99d7611c43b90511db08a4f84e4545caa78e7b52e9ccffe273864b.jpg`,
-  `${CDN}/dd/dddeaa4e6132c65bf7ff99d197f792a30937b5cbfe97a2b1ee54a793684df52e.jpg`,
-  `${CDN}/48/487977107b5011b5e1c25289f6e4393ef555e1a92daee554788e9363b233ca14.jpg`,
-  `${CDN}/a1/a12509688be6c9d3b2cb26d2ea1cfce48b8a8dbf2653e17be8a3fc31bd69f162.jpg`,
-  `${CDN}/05/051f9e565b5b0b221384d9c27a0760febc3fb48d190c046adfda579f3614c958.jpg`,
-  `${CDN}/87/87d4f60a4465d19d14b8acefa46275df4ccd767ccea6d7f234ea5bad99cfec56.jpg`,
-  `${CDN}/06/0610989e0675a12c02d35aa5464e2644bf77913214b748b73a894808d2d79877.jpg`,
-  `${CDN}/fe/fe90b90751e671a9526134c4743e2fcbf6c1a24991aba273ad7418c88fc9c701.jpg`,
-  `${CDN}/2e/2e0452c1994fcc2130a1b8ef68e34b5ea52d1b35b80dde09b99349ad1de54598.jpg`,
-].map((src, i) => ({
-  src,
-  title: `Placeholder ${String(i + 1).padStart(2, "0")}`,
-  caption: "Swap in your own photo and a one-line story about it.",
-  alt: "Placeholder stock photo",
-}));
+  {
+    src: "/life/half-marathon.jpg",
+    title: "Toronto Half Marathon",
+    caption: "Finished strong in 2:07:47. The knee brace did some heavy lifting.",
+    alt: "Andrew on a finish-line podium holding a Toronto Half Marathon medal, with a 2:07:47 clock behind him",
+    focus: "50% 40%",
+  },
+  {
+    src: "/life/vietnam-stream.jpg",
+    title: "Fairy Stream, Vietnam",
+    caption: "Barefoot through a red sand canyon. Shoes were optional, sunscreen was not.",
+    alt: "People wading up a shallow orange stream beside red sand cliffs and palm trees",
+  },
+  {
+    src: "/life/volleyball-champs.jpg",
+    title: "Intramural champs",
+    caption: "Queen's intramural volleyball. We came for the games, stayed for the free shirts.",
+    alt: "Four teammates in a gym holding up intramural champion shirts in front of a volleyball net",
+    focus: "50% 45%",
+  },
+  {
+    src: "/life/study-setup.jpg",
+    title: "8am at Common Ground",
+    caption: "Overnight oats, a SQL project and a to-do list. The usual setup.",
+    alt: "A laptop with SQL code open, an iPad to-do list, overnight oats and a shaker bottle on a cafe table",
+  },
+  {
+    src: "/life/gorge-hike.jpg",
+    title: "Gorge day",
+    caption: "Wading the river while someone slacklines way, way overhead.",
+    alt: "People wading a shallow river below tall tree-covered cliffs, with a slackliner high above and a bridge in the distance",
+  },
+  {
+    src: "/life/ultimate.jpg",
+    title: "Ultimate",
+    caption: "Pivoting past the mark. Ultimate frisbee is the most fun cardio there is.",
+    alt: "Two players on a grass field, one crouching low to throw a frisbee past a defender",
+    focus: "50% 75%",
+  },
+  {
+    src: "/life/tacos.jpg",
+    title: "Taco night",
+    caption: "End-of-week tradition. Birria tacos and a grapefruit something.",
+    alt: "Two trays of tacos topped with cheese and pico de gallo next to colourful drinks",
+    focus: "50% 60%",
+  },
+  {
+    src: "/life/concert.jpg",
+    title: "Live music",
+    caption: "Nosebleed seats, front-row energy.",
+    alt: "A concert stage glowing green and pink, with the crowd in silhouette",
+  },
+  {
+    src: "/life/post-race.jpg",
+    title: "Recovery mode",
+    caption: "Medal on, shades on, legs off.",
+    alt: "A selfie in a library lounge chair wearing sport sunglasses and holding a race medal, a friend on their phone nearby",
+    focus: "35% 50%",
+  },
+  {
+    src: "/life/homecoming.jpg",
+    title: "The crew",
+    caption: "Queen's colours, a sunny fall day and my favourite people.",
+    alt: "A group of friends in Queen's shirts squeezed together for a sunny selfie",
+    focus: "45% 50%",
+  },
+];

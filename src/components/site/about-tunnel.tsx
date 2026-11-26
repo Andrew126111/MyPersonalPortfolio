@@ -89,7 +89,7 @@ function TunnelCard({
       className="absolute top-1/2 left-1/2 aspect-[4/5] will-change-transform"
     >
       <div className="relative h-full w-full overflow-hidden rounded-2xl bg-surface shadow-2xl shadow-black/90 ring-1 ring-white/15">
-        <Image src={photo.src} alt="" fill sizes="270px" className="object-cover" />
+        <Image src={photo.src} alt="" fill sizes="270px" className="object-cover" style={{ objectPosition: photo.focus }} />
         <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/80 via-black/10 to-transparent p-4">
           <span className="font-mono text-xs tracking-widest text-white/95 uppercase drop-shadow-md">
             {photo.title}
