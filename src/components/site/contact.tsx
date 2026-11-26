@@ -4,14 +4,14 @@ import { useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
 import { ArrowUp, ArrowUpRight, Check, Copy, FileText, Mail } from "lucide-react";
 import { GitHubIcon, LinkedInIcon } from "@/components/icons";
-import { Constellation, ShootingStars } from "@/components/site/night-sky-effects";
+import { ShootingStars } from "@/components/site/night-sky-effects";
 import { Signature } from "@/components/signature";
 import { site } from "@/lib/site";
 
 /*
  * Contact: the night-sky finale of the "journey through the sky".
- * Your initials draw themselves as a constellation as you scroll in, shooting stars streak
- * past now and then, and the contact options sit below. Email and résumé cards only appear
+ * My signature writes itself as you scroll in (like signing off a letter), shooting stars
+ * streak past now and then, and the contact options sit below. Email and résumé cards only appear
  * once they're set in src/lib/site.ts.
  */
 
@@ -101,7 +101,7 @@ function CopyEmail({ email }: { email: string }) {
 export function Contact() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.85", "end end"] }); // fully drawn at the bottom of the page
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.85", "end end"] }); // signature finishes at the bottom of the page
   const drawn = useSpring(scrollYProgress, { stiffness: 80, damping: 22, restDelta: 0.001 });
   const full = useTransform(drawn, () => 1);
   const progress = reduce ? full : drawn;
@@ -184,16 +184,16 @@ export function Contact() {
             I&apos;m open to internships and interesting projects, especially anything at the
             intersection of AI and real products. The fastest way to reach me is LinkedIn.
           </motion.p>
-
-          {/* sign-off: the journey ends like a letter, with my signature writing itself */}
-          <div className="mt-8">
-            <p className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">Talk soon,</p>
-            <Signature className="mt-1 w-[240px] text-cream drop-shadow-[0_0_14px_rgb(94_224_255/0.25)] sm:w-[300px]" />
-          </div>
         </div>
 
-        {/* your initials as a constellation, drawn as you scroll in */}
-        <Constellation progress={progress} className="mx-auto w-full max-w-[420px] drop-shadow-[0_0_20px_rgb(94_224_255/0.15)]" />
+        {/* sign-off: the journey ends like a letter, my signature written as you scroll in */}
+        <div className="mx-auto w-full max-w-[460px]">
+          <p className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">Talk soon,</p>
+          <Signature
+            progress={progress}
+            className="mt-2 w-full text-cream drop-shadow-[0_0_18px_rgb(94_224_255/0.3)]"
+          />
+        </div>
       </div>
 
       <div className="relative mx-auto mt-14 grid w-full max-w-[1200px] gap-3 sm:gap-4 md:grid-cols-2">

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useMotionValueEvent, useScroll } from "motion/react";
 import { GitHubIcon, LinkedInIcon } from "@/components/icons";
+import { Signature } from "@/components/signature";
 import { cn } from "@/lib/utils";
 import { site } from "@/lib/site";
 
@@ -32,9 +33,14 @@ export function Nav() {
           !solid && "[text-shadow:0_1px_12px_rgb(0_0_0/0.45)]",
         )}
       >
-        <a href="#top" className="font-heading text-base font-medium tracking-tight text-white">
-          {site.handle}
-          <span className="text-glow">.</span>
+        {/* logo: my signature, written once when the page loads */}
+        <a href="#top" aria-label={`${site.name}, back to top`} className="-my-2 block text-white transition-colors duration-200 hover:text-glow">
+          <Signature
+            title=""
+            delay={0.4}
+            duration={1.8}
+            className="h-12 w-auto drop-shadow-[0_1px_8px_rgb(0_0_0/0.45)] sm:h-14"
+          />
         </a>
         <ul className="flex items-center gap-1 text-sm text-white/80">
           {site.nav
