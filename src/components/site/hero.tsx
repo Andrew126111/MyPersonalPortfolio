@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { ChevronDown } from "lucide-react";
 import { CloudBank } from "@/components/site/cloud-bank";
 import { VideoRipple } from "@/components/video-ripple";
 import { WordsPullUp } from "@/components/words-pull-up";
@@ -12,7 +13,7 @@ import { site } from "@/lib/site";
  *
  *   - big, bright name, role and one line of intro centred in the sky, above the person in
  *     the video, so the scene (and the ripples around it) stays visible
- *   - a small scroll cue; the site nav (with GitHub/LinkedIn) lives in <Nav>
+ *   - a scroll cue (frosted mouse, rolling wheel, cascading chevrons); the site nav (with GitHub/LinkedIn) lives in <Nav>
  *   - a strip of fog along the bottom that rises progressively as you scroll (CloudBank)
  *
  * Scroll: the video zooms and drifts gently, the text lifts and fades, and the fog climbs
@@ -92,20 +93,31 @@ export function Hero() {
         </FadeUp>
       </motion.div>
 
-      {/* scroll cue: a light running down a thin line */}
+      {/* scroll cue: a frosted "mouse" with a glowing wheel rolling down, chevrons cascading
+          beneath, and a soft pulse around it so it gets noticed on first view */}
       <motion.div
         style={{ opacity: contentOpacity }}
-        className="absolute bottom-[12vh] left-1/2 z-30 -translate-x-1/2 sm:bottom-[13vh]"
+        className="absolute bottom-[10vh] left-1/2 z-30 -translate-x-1/2 sm:bottom-[11vh]"
       >
         <FadeUp delay={1.1}>
           <a
             href="#about"
             aria-label="Scroll to About"
-            className="flex flex-col items-center gap-3 font-mono text-[11px] tracking-[0.24em] text-white/80 uppercase transition-colors duration-200 [text-shadow:0_1px_12px_rgb(0_0_0/0.5)] hover:text-white"
+            className="group flex flex-col items-center gap-3 text-white/90 transition-colors duration-200 hover:text-white"
           >
-            Scroll
-            <span className="relative h-10 w-px overflow-hidden bg-white/25">
-              <span className="absolute inset-x-0 top-0 h-1/2 bg-white motion-safe:animate-[scrollcue_1.8s_ease-in-out_infinite]" />
+            <span className="relative flex">
+              {/* attention pulse */}
+              <span className="absolute -inset-2 rounded-full border border-glow/50 motion-safe:animate-[cue-pulse_2.4s_ease-out_infinite]" />
+              <span className="relative flex h-14 w-9 justify-center rounded-full border-2 border-white/80 bg-white/10 pt-2.5 shadow-[0_0_24px_rgb(94_224_255/0.25)] backdrop-blur-md transition-colors duration-300 group-hover:border-white group-hover:bg-white/20">
+                <span className="size-2 rounded-full bg-glow shadow-[0_0_10px_rgb(94_224_255/0.9)] motion-safe:animate-[cue-wheel_1.8s_ease-in-out_infinite]" />
+              </span>
+            </span>
+            <span className="font-mono text-xs tracking-[0.24em] uppercase [text-shadow:0_1px_12px_rgb(0_0_0/0.6)] sm:text-[13px]">
+              Scroll to explore
+            </span>
+            <span className="-mt-1 flex flex-col items-center" aria-hidden="true">
+              <ChevronDown className="size-5 motion-safe:animate-[cue-chevron_1.8s_ease-in-out_infinite]" />
+              <ChevronDown className="-mt-3 size-5 motion-safe:animate-[cue-chevron_1.8s_ease-in-out_0.2s_infinite]" />
             </span>
           </a>
         </FadeUp>
