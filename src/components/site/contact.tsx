@@ -5,6 +5,7 @@ import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "mo
 import { ArrowUp, ArrowUpRight, Check, Copy, FileText, Mail } from "lucide-react";
 import { GitHubIcon, LinkedInIcon } from "@/components/icons";
 import { Constellation, ShootingStars } from "@/components/site/night-sky-effects";
+import { Signature } from "@/components/signature";
 import { site } from "@/lib/site";
 
 /*
@@ -183,6 +184,12 @@ export function Contact() {
             I&apos;m open to internships and interesting projects, especially anything at the
             intersection of AI and real products. The fastest way to reach me is LinkedIn.
           </motion.p>
+
+          {/* sign-off: the journey ends like a letter, with my signature writing itself */}
+          <div className="mt-8">
+            <p className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">Talk soon,</p>
+            <Signature className="mt-1 w-[240px] text-cream drop-shadow-[0_0_14px_rgb(94_224_255/0.25)] sm:w-[300px]" />
+          </div>
         </div>
 
         {/* your initials as a constellation, drawn as you scroll in */}
@@ -191,7 +198,10 @@ export function Contact() {
 
       <div className="relative mx-auto mt-14 grid w-full max-w-[1200px] gap-3 sm:gap-4 md:grid-cols-2">
         {cards.map((c, i) => (
-          <div key={c.key}>{c.el(i)}</div>
+          // min-w-0 lets long values (the email) truncate instead of pushing the card off-screen
+          <div key={c.key} className="min-w-0">
+            {c.el(i)}
+          </div>
         ))}
       </div>
 
