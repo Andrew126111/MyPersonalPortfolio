@@ -8,10 +8,12 @@ import { cn } from "@/lib/utils";
 /*
  * Scroll-driven illustrations for each role. Both take `progress` (0 → 1 as the role
  * scrolls through the screen) and play their story forward/backward with it.
+ *
+ * No panels: they're drawn straight onto the page's sky (dusk turning to night here), so the
+ * flight crosses the actual sky and the pipeline reads like the first stars coming out.
  */
 
-const panel =
-  "relative h-full w-full overflow-hidden rounded-2xl border border-border bg-[#0a1424] [background-image:radial-gradient(var(--subtle)_1px,transparent_1px)] [background-size:22px_22px]";
+const stage = "relative h-full w-full";
 
 /** Re-render only when `progress` crosses a threshold (cheap way to toggle pop-ins). */
 function useStep(progress: MotionValue<number>, thresholds: number[]) {
@@ -42,7 +44,7 @@ function Toast({
           exit={{ opacity: 0, y: 6, scale: 0.98 }}
           transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
           className={cn(
-            "absolute flex items-center gap-2.5 rounded-xl border border-border bg-surface/95 px-3 py-2.5 text-xs shadow-[0_16px_40px_-16px_rgb(0_0_0/0.9)] backdrop-blur-sm",
+            "absolute flex items-center gap-2.5 rounded-full border border-white/12 bg-white/[0.06] px-3.5 py-2 text-xs text-foreground/90 shadow-[0_12px_32px_-16px_rgb(0_0_0/0.8)] backdrop-blur-md",
             className,
           )}
         >
@@ -55,7 +57,7 @@ function Toast({
 
 /* ───────────────────────── CoTriplyy: flight path ───────────────────────── */
 
-// Kept in the upper part of the panel so the toasts along the bottom never cover it.
+// Kept in the upper part of the visual so the chips along the bottom never cover it.
 const FLIGHT_PATH = "M 70 150 C 170 0, 360 -10, 450 100";
 
 export function FlightVisual({ progress }: { progress: MotionValue<number> }) {
@@ -86,19 +88,26 @@ export function FlightVisual({ progress }: { progress: MotionValue<number> }) {
   const trail = useTransform(progress, [0, 1], [0, 1]);
 
   return (
-    <div className={panel} aria-hidden="true">
+    <div className={stage} aria-hidden="true">
       <svg viewBox="0 0 520 300" className="absolute inset-0 h-full w-full">
         {/* dashed route + the part already flown */}
-        <path ref={pathRef} d={FLIGHT_PATH} fill="none" stroke="var(--border)" strokeWidth="2" strokeDasharray="4 6" />
-        <motion.path d={FLIGHT_PATH} fill="none" stroke="var(--glow)" strokeWidth="2.5" strokeLinecap="round" style={{ pathLength: trail }} />
+        <defs>
+          <filter id="flight-glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" />
+          </filter>
+        </defs>
+        <path ref={pathRef} d={FLIGHT_PATH} fill="none" stroke="white" strokeOpacity="0.18" strokeWidth="1.5" strokeDasharray="3 7" />
+        {/* contrail: a soft glow under a crisp line */}
+        <motion.path d={FLIGHT_PATH} fill="none" stroke="var(--glow)" strokeOpacity="0.5" strokeWidth="6" filter="url(#flight-glow)" style={{ pathLength: trail }} />
+        <motion.path d={FLIGHT_PATH} fill="none" stroke="var(--glow)" strokeWidth="2" strokeLinecap="round" style={{ pathLength: trail }} />
         {/* airports */}
         {[
           { x: 70, y: 150, code: "YYZ", city: "Toronto" },
           { x: 450, y: 100, code: "LIS", city: "Lisbon" },
         ].map((a) => (
           <g key={a.code}>
-            <circle cx={a.x} cy={a.y} r="10" fill="var(--glow)" opacity="0.15" />
-            <circle cx={a.x} cy={a.y} r="4" fill="var(--glow)" />
+            <circle cx={a.x} cy={a.y} r="14" fill="var(--glow)" opacity="0.12" />
+            <circle cx={a.x} cy={a.y} r="3.5" fill="white" />
             <text x={a.x} y={a.y + 26} textAnchor="middle" fill="var(--foreground)" fontSize="14" fontFamily="var(--font-mono)">
               {a.code}
             </text>
@@ -110,8 +119,8 @@ export function FlightVisual({ progress }: { progress: MotionValue<number> }) {
         {/* plane (Lucide icon path, drawn at the current point) */}
         <g ref={planeRef} transform="translate(70 150)">
           <g transform="translate(-12 -12)">
-            <circle cx="12" cy="12" r="15" fill="#0a1424" />
-            <Plane x={0} y={0} width={24} height={24} color="var(--cream)" strokeWidth={1.75} />
+            <circle cx="12" cy="12" r="16" fill="var(--glow)" opacity="0.14" />
+            <Plane x={0} y={0} width={24} height={24} color="white" strokeWidth={1.75} />
           </g>
         </g>
       </svg>
@@ -191,7 +200,7 @@ export function PipelineVisual({ progress }: { progress: MotionValue<number> }) 
   const lit = (id: keyof typeof LIGHT_AT) => step >= 1 && progress.get() >= LIGHT_AT[id];
 
   return (
-    <div className={panel} aria-hidden="true">
+    <div className={stage} aria-hidden="true">
       <svg viewBox="0 0 100 60" preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
         {EDGES.map(([a, b]) => (
           <line
@@ -200,8 +209,9 @@ export function PipelineVisual({ progress }: { progress: MotionValue<number> }) 
             y1={pos(a).y}
             x2={pos(b).x}
             y2={pos(b).y}
-            stroke="var(--border)"
-            strokeWidth="1.5"
+            stroke="white"
+            strokeOpacity="0.14"
+            strokeWidth="1"
             vectorEffect="non-scaling-stroke"
           />
         ))}
@@ -210,7 +220,8 @@ export function PipelineVisual({ progress }: { progress: MotionValue<number> }) 
           d={ROUTE}
           fill="none"
           stroke="var(--glow)"
-          strokeWidth="2"
+          strokeOpacity="0.8"
+          strokeWidth="1.5"
           vectorEffect="non-scaling-stroke"
           style={{ pathLength: trail }}
         />
@@ -219,26 +230,34 @@ export function PipelineVisual({ progress }: { progress: MotionValue<number> }) 
       {/* travelling data pulse */}
       <div
         ref={pulseRef}
-        className="absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-glow opacity-0 shadow-[0_0_16px_4px_rgb(200_245_96/0.6)]"
+        className="absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-glow opacity-0 shadow-[0_0_18px_5px_rgb(94_224_255/0.6)]"
       />
 
-      {/* nodes */}
+      {/* nodes: points of light with a label, brightening as the data reaches them */}
       {NODES.map((n) => {
         const on = lit(n.id);
         const Icon = n.icon;
         return (
           <div
             key={n.id}
-            className={cn(
-              "absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 rounded-lg border px-2 py-1.5 font-mono text-[10px] whitespace-nowrap transition-all duration-300 sm:text-[11px]",
-              on
-                ? "border-glow/60 bg-surface text-foreground shadow-[0_0_24px_-6px_rgb(200_245_96/0.5)]"
-                : "border-border bg-[#0a1424] text-muted-foreground",
-            )}
+            className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2"
             style={{ left: `${n.x}%`, top: `${(n.y / 60) * 100}%` }}
           >
-            <Icon className={cn("size-3", on && "text-glow")} />
-            {n.label}
+            <span
+              className={cn(
+                "relative flex size-3 items-center justify-center rounded-full transition-all duration-500",
+                on ? "bg-white shadow-[0_0_16px_4px_rgb(94_224_255/0.55)]" : "bg-white/35",
+              )}
+            />
+            <span
+              className={cn(
+                "absolute top-5 flex items-center gap-1 font-mono text-[10px] whitespace-nowrap transition-colors duration-500 sm:text-[11px]",
+                on ? "text-foreground" : "text-muted-foreground/70",
+              )}
+            >
+              <Icon className={cn("size-3", on ? "text-glow" : "opacity-60")} />
+              {n.label}
+            </span>
           </div>
         );
       })}

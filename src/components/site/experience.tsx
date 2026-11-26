@@ -2,7 +2,7 @@
 
 import { useRef, useSyncExternalStore } from "react";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
-import { MapPin } from "lucide-react";
+import { ChevronDown, MapPin } from "lucide-react";
 import { CountUp } from "@/components/count-up";
 import { FlightVisual, PipelineVisual } from "@/components/site/experience-visuals";
 import { SectionHeading } from "@/components/site/section-heading";
@@ -10,7 +10,8 @@ import { ROLES, type Role } from "@/content/experience";
 
 /*
  * Experience: a glowing timeline down the left that fills as you scroll, and for each role
- * the details on one side and a scroll-driven illustration of what was built on the other.
+ * the details on one side and a scroll-driven illustration of what was built on the other,
+ * drawn straight onto the sky. Text is kept short: big stats, two points, the rest on demand.
  */
 
 const VISUALS = { flight: FlightVisual, pipeline: PipelineVisual } as const;
@@ -26,6 +27,15 @@ function useIsDesktop() {
     },
     () => window.matchMedia("(min-width: 1024px)").matches,
     () => false,
+  );
+}
+
+function Point({ text }: { text: string }) {
+  return (
+    <li className="flex gap-3 text-[15px] leading-relaxed text-muted-foreground">
+      <span className="mt-2.5 size-1 shrink-0 rounded-full bg-glow" aria-hidden="true" />
+      {text}
+    </li>
   );
 }
 
@@ -74,35 +84,45 @@ function RoleRow({ role, index }: { role: Role; index: number }) {
           <p className="mt-1 text-lg text-cream/90">{role.title}</p>
           <p className="mt-4 text-[17px] leading-relaxed text-muted-foreground">{role.summary}</p>
 
-          {/* stats */}
-          <dl className="mt-6 grid grid-cols-3 gap-3">
+          {/* stats: big plain numbers, no boxes */}
+          <dl className="mt-7 grid grid-cols-3 gap-4 sm:flex sm:flex-wrap sm:gap-x-10 sm:gap-y-4">
             {role.stats.map((s) => (
-              <div key={s.label} className="rounded-xl border border-border bg-surface/60 p-3">
+              <div key={s.label}>
                 <dt className="sr-only">{s.label}</dt>
-                <dd className="font-heading text-xl font-bold whitespace-nowrap text-glow sm:text-3xl">
+                <dd className="font-heading text-2xl font-bold whitespace-nowrap text-glow sm:text-4xl">
                   <CountUp to={s.value} prefix={s.prefix} suffix={s.suffix} />
                 </dd>
-                <dd className="mt-1 text-[11px] leading-snug text-muted-foreground sm:text-xs">{s.label}</dd>
+                <dd className="mt-1 max-w-[16ch] text-xs leading-snug text-muted-foreground">{s.label}</dd>
               </div>
             ))}
           </dl>
 
-          <ul className="mt-6 space-y-3">
-            {role.points.map((p) => (
-              <li key={p} className="flex gap-3 text-sm leading-relaxed text-muted-foreground">
-                <span className="mt-2 size-1 shrink-0 rounded-full bg-glow" aria-hidden="true" />
-                {p}
-              </li>
+          {/* two headline points; the rest tuck behind "More details" */}
+          <ul className="mt-7 space-y-3">
+            {role.points.slice(0, 2).map((p) => (
+              <Point key={p} text={p} />
             ))}
           </ul>
+          {role.points.length > 2 && (
+            <details className="group mt-3">
+              <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 font-mono text-xs text-glow/90 transition-colors hover:text-glow [&::-webkit-details-marker]:hidden">
+                <span className="group-open:hidden">More details</span>
+                <span className="hidden group-open:inline">Less</span>
+                <ChevronDown className="size-3.5 transition-transform duration-300 group-open:rotate-180" aria-hidden="true" />
+              </summary>
+              <ul className="mt-3 space-y-3">
+                {role.points.slice(2).map((p) => (
+                  <Point key={p} text={p} />
+                ))}
+              </ul>
+            </details>
+          )}
 
-          <ul className="mt-6 flex flex-wrap gap-2" aria-label="Tools used">
-            {role.stack.map((t) => (
-              <li key={t} className="rounded-full border border-border bg-surface px-3 py-1 font-mono text-[11px] text-muted-foreground">
-                {t}
-              </li>
-            ))}
-          </ul>
+          {/* tools, as a quiet line */}
+          <p className="mt-6 font-mono text-[11px] leading-relaxed text-muted-foreground/80">
+            <span className="sr-only">Tools used: </span>
+            {role.stack.join("  ·  ")}
+          </p>
         </motion.div>
 
         {/* scroll-driven illustration; sticks beside the text on desktop while you read */}
@@ -143,7 +163,7 @@ export function Experience() {
         <motion.div
           aria-hidden="true"
           style={{ scaleY: reduce ? 1 : fill }}
-          className="absolute top-2 bottom-0 left-0 w-px origin-top bg-glow shadow-[0_0_12px_1px_rgb(200_245_96/0.6)]"
+          className="absolute top-2 bottom-0 left-0 w-px origin-top bg-glow shadow-[0_0_12px_1px_rgb(94_224_255/0.6)]"
         />
 
         <div className="space-y-24 sm:space-y-32">
