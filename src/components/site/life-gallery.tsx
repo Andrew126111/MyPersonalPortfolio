@@ -233,7 +233,7 @@ function LifeArc() {
                 fill
                 sizes="640px"
                 style={{ objectPosition: LIFE[active].focus }}
-                className="scale-105 object-cover blur-sm saturate-[1.15]"
+                className="scale-105 object-cover blur-[4px] saturate-[1.15]"
               />
             </motion.div>
           )}
