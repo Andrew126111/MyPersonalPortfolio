@@ -1,240 +1,184 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
-import { ArrowUpRight, GraduationCap, MapPin, Sparkles, Wrench } from "lucide-react";
+import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
 import { LifeGallery } from "@/components/site/life-gallery";
 import { cn } from "@/lib/utils";
 
+/*
+ * About, part two: after the photo gallery, a short statement in big type that lights up
+ * word by word as you scroll past it, a single line of quick facts, and the tech stack as
+ * one slow-scrolling row. Everything sits straight on the sky, with no cards.
+ */
+
 /* ───────────────────────── content ───────────────────────── */
 
+// Words wrapped in *asterisks* light up in the accent colour.
+const STATEMENT =
+  "I'm *Andrew,* a Computing student at Queen's specializing in *AI.* I like building things people *actually* *use,* from the LLM pipeline all the way to the checkout button.";
+
 const STACK = [
-  { group: "Languages", items: ["TypeScript", "Python", "Java", "C", "SQL"] },
-  { group: "Frameworks", items: ["Next.js", "React", "FastAPI", "Node.js", "Tailwind"] },
-  { group: "AI & tools", items: ["Gemini API", "HuggingFace", "n8n", "Docker", "GCP"] },
+  "TypeScript",
+  "Python",
+  "Java",
+  "C",
+  "SQL",
+  "Next.js",
+  "React",
+  "FastAPI",
+  "Node.js",
+  "Tailwind",
+  "Gemini API",
+  "HuggingFace",
+  "n8n",
+  "Docker",
+  "GCP",
 ];
 
-const BUILDS = ["LLM pipelines", "AI agents", "Full-stack apps", "Automation", "Chrome extensions"];
+const WORDS = STATEMENT.split(" ").map((w) => {
+  const accent = w.startsWith("*") && w.endsWith("*");
+  return { text: accent ? w.slice(1, -1) : w, accent };
+});
 
-/* ───────────────────────── bento card ───────────────────────── */
+/* ───────────────────────── statement ───────────────────────── */
 
-/**
- * Card whose border lights up glow near the cursor. The glow position is set on every
- * card by the grid (see `onPointerMove` in About), so neighbouring cards light up together
- * as the cursor moves between them.
- */
-function BentoCard({
-  className,
-  children,
-  index,
+function Word({
+  text,
+  accent,
+  progress,
+  range,
 }: {
-  className?: string;
-  children: React.ReactNode;
-  index: number;
+  text: string;
+  accent: boolean;
+  progress: MotionValue<number>;
+  range: [number, number];
 }) {
-  const reduce = useReducedMotion();
+  const opacity = useTransform(progress, range, [0.16, 1]);
   return (
-    <motion.div
-      data-bento
-      initial={reduce ? false : { opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.5, delay: index * 0.06, ease: "easeOut" }}
-      className={cn(
-        "group relative overflow-hidden rounded-2xl border border-transparent p-6",
-        className,
-      )}
-      style={{
-        // Two backgrounds: the card fill (inside the border) and a cursor-following
-        // glow glow that only shows through the 1px transparent border.
-        background:
-          "linear-gradient(var(--card), var(--card)) padding-box, radial-gradient(260px circle at var(--x, -999px) var(--y, -999px), rgb(94 224 255 / 0.6), var(--border) 70%) border-box",
-      }}
-    >
-      {/* faint inner glow following the cursor */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{
-          background:
-            "radial-gradient(320px circle at var(--x, -999px) var(--y, -999px), rgb(94 224 255 / 0.06), transparent 60%)",
-        }}
-      />
-      <div className="relative h-full">{children}</div>
-    </motion.div>
+    <motion.span style={{ opacity }} className={cn(accent && "text-glow")}>
+      {text}{" "}
+    </motion.span>
   );
 }
 
-function CardLabel({ icon: Icon, children }: { icon: typeof Sparkles; children: React.ReactNode }) {
+/** Big statement whose words light up in reading order as it scrolls through the screen. */
+function ScrollLitStatement() {
+  const ref = useRef<HTMLParagraphElement>(null);
+  const reduce = useReducedMotion();
+  // starts lighting as the text enters the lower part of the screen, done by the middle
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.85", "end 0.5"] });
+  const lit = useTransform(scrollYProgress, () => 1);
+  const progress = reduce ? lit : scrollYProgress;
+
   return (
-    <p className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
-      <Icon className="size-3.5" aria-hidden="true" />
-      {children}
+    <p
+      ref={ref}
+      className="font-heading text-[8.4vw] leading-[1.08] font-medium tracking-[-0.03em] text-foreground sm:text-5xl lg:text-[64px]"
+    >
+      {/* screen readers get the sentence in one piece */}
+      <span className="sr-only">{STATEMENT.replaceAll("*", "")}</span>
+      <span aria-hidden="true">
+        {WORDS.map((w, i) => (
+          <Word
+            key={i}
+            text={w.text}
+            accent={w.accent}
+            progress={progress}
+            range={[i / WORDS.length, (i + 1) / WORDS.length]}
+          />
+        ))}
+      </span>
     </p>
   );
 }
 
-/** Live local time in Toronto, ticking every second (rendered client-side only). */
-function TorontoClock() {
+/* ───────────────────────── facts + stack ───────────────────────── */
+
+/** Toronto local time, h:mm (client-side only, refreshed every 15 s). */
+function TorontoTime() {
   const [time, setTime] = useState<string | null>(null);
   useEffect(() => {
     const fmt = new Intl.DateTimeFormat("en-CA", {
       timeZone: "America/Toronto",
       hour: "numeric",
       minute: "2-digit",
-      second: "2-digit",
       hour12: true,
     });
     const tick = () => setTime(fmt.format(new Date()));
     const first = setTimeout(tick, 0);
-    const id = setInterval(tick, 1000);
+    const id = setInterval(tick, 15_000);
     return () => {
       clearTimeout(first);
       clearInterval(id);
     };
   }, []);
+  return <span className="tabular-nums">{time ?? "--:--"}</span>;
+}
+
+function Facts() {
   return (
-    <span className="font-mono text-sm tabular-nums text-foreground">
-      {time ?? "--:--:-- --"}
-    </span>
+    <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs tracking-[0.12em] text-white/80 uppercase [text-shadow:0_1px_10px_rgb(0_0_0/0.45)] sm:text-[13px]">
+      <span>Queen&apos;s &apos;28</span>
+      <span aria-hidden="true">·</span>
+      <span className="inline-flex items-center gap-2">
+        <span className="relative flex size-2" aria-hidden="true">
+          <span className="absolute inline-flex size-full animate-ping rounded-full bg-glow opacity-60 motion-reduce:animate-none" />
+          <span className="relative inline-flex size-2 rounded-full bg-glow" />
+        </span>
+        Toronto, ON
+      </span>
+      <span aria-hidden="true">·</span>
+      <span>
+        <TorontoTime /> local
+      </span>
+    </p>
+  );
+}
+
+/** The stack as one slow, endless row. Pauses on hover; static and wrapped for reduced motion. */
+function StackMarquee() {
+  const item = (name: string, dup = false) => (
+    <li
+      key={dup ? `dup-${name}` : name}
+      aria-hidden={dup || undefined}
+      className={cn("flex shrink-0 items-center gap-6 pr-6", dup && "motion-reduce:hidden")}
+    >
+      <span className="font-heading text-xl font-medium text-foreground/85 transition-colors duration-200 hover:text-glow sm:text-2xl">
+        {name}
+      </span>
+      <span className="size-1 rounded-full bg-glow/60" aria-hidden="true" />
+    </li>
+  );
+  return (
+    <div className="group relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+      <h3 className="sr-only">Tech stack</h3>
+      {/* two copies side by side; sliding by exactly one copy loops seamlessly */}
+      <ul className="flex w-max motion-safe:animate-[marquee_45s_linear_infinite] group-hover:[animation-play-state:paused] motion-reduce:w-full motion-reduce:flex-wrap motion-reduce:gap-y-3">
+        {STACK.map((s) => item(s))}
+        {STACK.map((s) => item(s, true))}
+      </ul>
+    </div>
   );
 }
 
 /* ───────────────────────── section ───────────────────────── */
 
 export function About() {
-  const gridRef = useRef<HTMLDivElement>(null);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  // Feed the cursor position to every card so their borders glow as one surface.
-  function onPointerMove(e: React.PointerEvent<HTMLDivElement>) {
-    if (e.pointerType !== "mouse") return;
-    gridRef.current?.querySelectorAll<HTMLElement>("[data-bento]").forEach((card) => {
-      const r = card.getBoundingClientRect();
-      card.style.setProperty("--x", `${e.clientX - r.left}px`);
-      card.style.setProperty("--y", `${e.clientY - r.top}px`);
-    });
-  }
-  function onPointerLeave() {
-    gridRef.current?.querySelectorAll<HTMLElement>("[data-bento]").forEach((card) => {
-      card.style.removeProperty("--x");
-      card.style.removeProperty("--y");
-    });
-  }
-
   return (
-    <section ref={sectionRef} id="about" aria-labelledby="about-title" className="pb-20 sm:pb-32">
+    <section id="about" aria-labelledby="about-title" className="pb-24 sm:pb-36">
       {/* Tunnel fly-through → photo circle → arc. Its title is this section's heading. */}
       <LifeGallery />
 
-      {/* The basics */}
-      <div className="mx-auto mt-16 w-full max-w-[1200px] px-4 sm:mt-24 sm:px-6">
-        <div
-          ref={gridRef}
-          onPointerMove={onPointerMove}
-          onPointerLeave={onPointerLeave}
-          className="grid auto-rows-[minmax(170px,auto)] grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-4"
-        >
-          {/* Bio */}
-          <BentoCard index={0} className="md:col-span-2 lg:row-span-2">
-            <div className="flex h-full flex-col justify-between gap-8">
-              <CardLabel icon={Sparkles}>Hello</CardLabel>
-              <div className="space-y-4 text-[17px] leading-relaxed text-muted-foreground">
-                <p>
-                  I&apos;m <span className="text-foreground">Andrew</span>, a Computing student
-                  specializing in Artificial Intelligence at Queen&apos;s University.
-                </p>
-                <p>
-                  I like building things people actually use, from the LLM pipeline all the way to
-                  the checkout button.
-                </p>
-              </div>
-              <a
-                href="#experience"
-                className="inline-flex w-fit items-center gap-1 text-sm text-foreground transition-colors duration-200 hover:text-glow"
-              >
-                See my experience <ArrowUpRight className="size-3.5" />
-              </a>
-            </div>
-          </BentoCard>
-
-          {/* Education */}
-          <BentoCard index={1} className="md:col-span-2">
-            <div className="flex h-full flex-col justify-between gap-6">
-              <CardLabel icon={GraduationCap}>Education</CardLabel>
-              <div>
-                <p className="font-heading text-2xl font-bold">Queen&apos;s University</p>
-                <p className="mt-1 text-muted-foreground">
-                  Bachelor of Computing (Honours), Artificial Intelligence
-                </p>
-                <p className="mt-3 font-mono text-xs text-muted-foreground">
-                  Kingston, ON · Expected April 2028
-                </p>
-              </div>
-            </div>
-          </BentoCard>
-
-          {/* What I build */}
-          <BentoCard index={2}>
-            <div className="flex h-full flex-col justify-between gap-6">
-              <CardLabel icon={Wrench}>I build</CardLabel>
-              <ul className="space-y-1.5">
-                {BUILDS.map((b) => (
-                  <li
-                    key={b}
-                    className="flex items-center gap-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
-                  >
-                    <span className="size-1 rounded-full bg-glow" aria-hidden="true" />
-                    {b}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </BentoCard>
-
-          {/* Location + live clock */}
-          <BentoCard index={3}>
-            <div className="flex h-full flex-col justify-between gap-6">
-              <CardLabel icon={MapPin}>Based in</CardLabel>
-              <div>
-                <p className="flex items-center gap-2 font-heading text-2xl font-bold">
-                  <span className="relative flex size-2.5" aria-hidden="true">
-                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-glow opacity-60 motion-reduce:animate-none" />
-                    <span className="relative inline-flex size-2.5 rounded-full bg-glow" />
-                  </span>
-                  Toronto, ON
-                </p>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Local time <TorontoClock />
-                </p>
-              </div>
-            </div>
-          </BentoCard>
-
-          {/* Stack */}
-          <BentoCard index={4} className="md:col-span-2 lg:col-span-4">
-            <div className="flex h-full flex-col gap-5">
-              <CardLabel icon={Sparkles}>Stack</CardLabel>
-              <div className="grid gap-4 lg:grid-cols-3">
-                {STACK.map((row) => (
-                  <div key={row.group}>
-                    <p className="mb-2 font-mono text-[11px] text-muted-foreground">{row.group}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {row.items.map((item) => (
-                        <span
-                          key={item}
-                          className="rounded-full border border-border bg-surface-2 px-3 py-1 text-xs text-foreground transition-colors duration-200 hover:border-glow hover:text-glow"
-                        >
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </BentoCard>
+      <div className="mx-auto mt-20 w-full max-w-[1100px] px-5 sm:mt-28 sm:px-6">
+        <p className="mb-6 font-mono text-xs tracking-[0.12em] text-glow uppercase">A bit more about me</p>
+        <ScrollLitStatement />
+        <div className="mt-10 sm:mt-12">
+          <Facts />
         </div>
+      </div>
+
+      <div className="mx-auto mt-14 w-full max-w-[1200px] sm:mt-20">
+        <StackMarquee />
       </div>
     </section>
   );

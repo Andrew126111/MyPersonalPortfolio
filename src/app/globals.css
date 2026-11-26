@@ -149,6 +149,11 @@
   50% { opacity: 1; }
 }
 
+/* About: the stack row slides left by one full copy of itself, then loops. */
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+
 /* Hero scroll cue: the wheel rolls down and fades; the cue floats gently. */
 @keyframes cue-wheel {
   0% { transform: translateY(0); opacity: 0; }
