@@ -34,7 +34,7 @@ export function Nav() {
         )}
       >
         {/* logo: my signature, written once when the page loads */}
-        <a href="#top" aria-label={`${site.name}, back to top`} className="-my-2 block text-white transition-colors duration-200 hover:text-glow">
+        <a href="#top" data-logo aria-label={`${site.name}, back to top`} className="-my-2 block text-white transition-colors duration-200 hover:text-glow">
           <Signature
             title=""
             delay={0.4}

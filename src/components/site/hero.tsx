@@ -5,6 +5,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"
 import { CloudBank } from "@/components/site/cloud-bank";
 import { VideoRipple } from "@/components/video-ripple";
 import { WordsPullUp } from "@/components/words-pull-up";
+import { useIntroDone } from "@/lib/intro";
 import { site } from "@/lib/site";
 
 /*
@@ -27,10 +28,11 @@ const HERO_FOCUS = { x: 0.72, y: 0.64 };
 
 function FadeUp({ delay, children, className }: { delay: number; children: React.ReactNode; className?: string }) {
   const reduce = useReducedMotion();
+  const ready = useIntroDone(); // plays as the opening intro hands off
   return (
     <motion.div
       initial={reduce ? false : { y: 16, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
+      animate={ready ? { y: 0, opacity: 1 } : undefined}
       transition={{ duration: 0.9, delay, ease: EASE }}
       className={className}
     >
@@ -42,6 +44,7 @@ function FadeUp({ delay, children, className }: { delay: number; children: React
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
+  const introDone = useIntroDone();
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const videoScale = useTransform(scrollYProgress, [0, 1], [1, reduce ? 1 : 1.12]);
@@ -86,7 +89,7 @@ export function Hero() {
         <h1 className="mt-4 font-heading text-[16vw] leading-[0.9] font-bold tracking-[-0.05em] text-hero-ink [text-shadow:none] [filter:drop-shadow(0_2px_18px_rgb(0_0_0/0.45))_drop-shadow(0_0_40px_rgb(94_224_255/0.25))] sm:text-[10vw] lg:text-[8.6vw]">
           <span className="sr-only">Andrew Nguyen, Software Engineer</span>
           <span aria-hidden="true">
-            <WordsPullUp text="Andrew Nguyen" className="justify-center" delay={0.3} />
+            <WordsPullUp text="Andrew Nguyen" className="justify-center" delay={0.3} play={introDone} />
           </span>
         </h1>
       </motion.div>

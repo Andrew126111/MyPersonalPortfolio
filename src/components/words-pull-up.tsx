@@ -12,12 +12,15 @@ export function WordsPullUp({
   className = "",
   asterisk,
   delay = 0,
+  play = true,
 }: {
   text: string;
   className?: string;
   /** small mark after the last word (e.g. "*"), styled by `asteriskClassName` */
   asterisk?: React.ReactNode;
   delay?: number;
+  /** hold the animation until this is true (e.g. until the opening intro hands off) */
+  play?: boolean;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true });
@@ -39,7 +42,7 @@ export function WordsPullUp({
             <motion.span
               className="relative inline-block"
               initial={reduce ? false : { y: "100%", opacity: 0 }}
-              animate={inView ? { y: 0, opacity: 1 } : undefined}
+              animate={inView && play ? { y: 0, opacity: 1 } : undefined}
               transition={{ duration: 0.9, delay: delay + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
             >
               {word}
