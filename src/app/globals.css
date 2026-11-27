@@ -34,6 +34,10 @@
   --color-glow: var(--glow);
   --color-cream: var(--cream);
   --color-hero-ink: var(--hero-ink);
+  --color-sky-1: var(--sky-1);
+  --color-sky-2: var(--sky-2);
+  --color-sky-3: var(--sky-3);
+  --color-sky-4: var(--sky-4);
 
   --font-sans: var(--font-inter);
   --font-heading: var(--font-space-grotesk);
@@ -153,6 +157,12 @@
 @keyframes hero-drift {
   from { transform: scale(1.01) translate(0, 0); }
   to { transform: scale(1.045) translate(-0.8%, 0.4%); }
+}
+
+/* Contact form dialog pops in. */
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to { opacity: 1; transform: none; }
 }
 
 /* About: the stack row slides left by one full copy of itself, then loops. */

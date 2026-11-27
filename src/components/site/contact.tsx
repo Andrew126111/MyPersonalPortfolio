@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
-import { ArrowUp, ArrowUpRight, Check, Copy, FileText, Mail } from "lucide-react";
-import { GitHubIcon, LinkedInIcon } from "@/components/icons";
+import { ArrowUp } from "lucide-react";
+import { ContactForm, type ContactFormHandle } from "@/components/site/contact-form";
+import { ContactPills } from "@/components/site/contact-pills";
 import { ShootingStars } from "@/components/site/night-sky-effects";
 import { Signature } from "@/components/signature";
 import { site } from "@/lib/site";
@@ -11,92 +12,12 @@ import { site } from "@/lib/site";
 /*
  * Contact: the night-sky finale of the "journey through the sky".
  * My signature writes itself as you scroll in (like signing off a letter), shooting stars
- * streak past now and then, and the contact options sit below. Email and résumé cards only appear
- * once they're set in src/lib/site.ts.
+ * streak past now and then, and below, the contact options fall out of the sky as chunky
+ * pills you can grab and toss (contact-pills.tsx); the message pills open a form.
+ * A résumé link appears once `site.resume` is set in src/lib/site.ts.
  */
 
 const EASE = [0.16, 1, 0.3, 1] as const;
-
-function Card({
-  href,
-  icon,
-  label,
-  value,
-  external,
-  download,
-  index,
-  children,
-}: {
-  href?: string;
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  external?: boolean;
-  download?: boolean;
-  index: number;
-  children?: React.ReactNode;
-}) {
-  const reduce = useReducedMotion();
-  const body = (
-    <>
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-surface-2 text-glow transition-colors duration-300 group-hover:border-glow/60">
-        {icon}
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">{label}</span>
-        <span className="mt-0.5 block truncate text-foreground">{value}</span>
-      </span>
-      {children ?? <ArrowUpRight className="size-4 text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-glow" />}
-    </>
-  );
-  const cls =
-    "group flex items-center gap-4 rounded-2xl border border-border bg-card/70 p-4 backdrop-blur-md transition-colors duration-300 hover:border-glow/40 sm:p-5";
-  return (
-    <motion.div
-      initial={reduce ? false : { opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.6, delay: index * 0.07, ease: EASE }}
-    >
-      {href ? (
-        <a
-          href={href}
-          className={cls}
-          {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
-          {...(download ? { download: "" } : {})}
-        >
-          {body}
-        </a>
-      ) : (
-        <div className={cls}>{body}</div>
-      )}
-    </motion.div>
-  );
-}
-
-function CopyEmail({ email }: { email: string }) {
-  const [copied, setCopied] = useState(false);
-  return (
-    <button
-      type="button"
-      onClick={async (e) => {
-        e.preventDefault();
-        try {
-          await navigator.clipboard.writeText(email);
-          setCopied(true);
-          window.setTimeout(() => setCopied(false), 1800);
-        } catch {
-          window.location.href = `mailto:${email}`;
-        }
-      }}
-      className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors duration-200 hover:border-glow hover:text-glow"
-      aria-live="polite"
-    >
-      {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
-      {copied ? "Copied" : "Copy"}
-    </button>
-  );
-}
 
 export function Contact() {
   const ref = useRef<HTMLElement>(null);
@@ -106,41 +27,7 @@ export function Contact() {
   const full = useTransform(drawn, () => 1);
   const progress = reduce ? full : drawn;
 
-  const cards: { key: string; el: (i: number) => React.ReactNode }[] = [
-    site.email && {
-      key: "email",
-      el: (i: number) => (
-        <Card index={i} href={`mailto:${site.email}`} icon={<Mail className="size-4" />} label="Email" value={site.email}>
-          <CopyEmail email={site.email} />
-        </Card>
-      ),
-    },
-    {
-      key: "linkedin",
-      el: (i: number) => (
-        <Card
-          index={i}
-          href={site.links.linkedin}
-          external
-          icon={<LinkedInIcon className="size-4" />}
-          label="LinkedIn"
-          value="andrew-nguyenn18"
-        />
-      ),
-    },
-    {
-      key: "github",
-      el: (i: number) => (
-        <Card index={i} href={site.links.github} external icon={<GitHubIcon className="size-4" />} label="GitHub" value="Andrew126111" />
-      ),
-    },
-    site.resume && {
-      key: "resume",
-      el: (i: number) => (
-        <Card index={i} href={site.resume} download icon={<FileText className="size-4" />} label="Résumé" value="Download PDF" />
-      ),
-    },
-  ].filter(Boolean) as { key: string; el: (i: number) => React.ReactNode }[];
+  const form = useRef<ContactFormHandle>(null);
 
   return (
     <section
@@ -182,7 +69,7 @@ export function Contact() {
             className="mt-6 max-w-[46ch] text-[17px] leading-relaxed text-muted-foreground"
           >
             I&apos;m open to internships and interesting projects, especially anything at the
-            intersection of AI and real products. The fastest way to reach me is LinkedIn.
+            intersection of AI and real products. Pick a way to reach me below.
           </motion.p>
         </div>
 
@@ -196,14 +83,21 @@ export function Contact() {
         </div>
       </div>
 
-      <div className="relative mx-auto mt-14 grid w-full max-w-[1200px] gap-3 sm:gap-4 md:grid-cols-2">
-        {cards.map((c, i) => (
-          // min-w-0 lets long values (the email) truncate instead of pushing the card off-screen
-          <div key={c.key} className="min-w-0">
-            {c.el(i)}
-          </div>
-        ))}
+      {/* the playground: contact pills that fall from the sky; grab, toss, or click them */}
+      <div className="relative mx-auto mt-16 w-full max-w-[1200px] sm:mt-20">
+        <p className="mb-3 text-center font-mono text-[11px] tracking-[0.14em] text-muted-foreground uppercase">
+          Grab one, toss it, or click to reach out
+        </p>
+        <ContactPills onMessage={() => form.current?.open()} />
+        {site.resume && (
+          <p className="mt-4 text-center text-sm">
+            <a href={site.resume} download className="text-muted-foreground underline-offset-4 hover:text-glow hover:underline">
+              Download my résumé (PDF)
+            </a>
+          </p>
+        )}
       </div>
+      <ContactForm ref={form} />
 
       {/* footer */}
       <footer className="relative mx-auto mt-24 flex w-full max-w-[1200px] flex-col items-start justify-between gap-4 border-t border-border/70 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center">
