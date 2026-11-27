@@ -187,11 +187,11 @@ function PhysicsPile({ onMessage, onCopy }: { onMessage: () => void; onCopy: () 
       ([entry]) => {
         visible = entry.isIntersecting;
         if (visible) {
-          if (entry.intersectionRatio > 0.35) start();
+          if (entry.intersectionRatio > 0.6) start(); // most of it on screen, so you see them fall
           if (!raf) raf = requestAnimationFrame(frame);
         }
       },
-      { threshold: [0, 0.35] },
+      { threshold: [0, 0.6] },
     );
     io.observe(box);
 
@@ -293,7 +293,7 @@ function PhysicsPile({ onMessage, onCopy }: { onMessage: () => void; onCopy: () 
   return (
     <div
       ref={boxRef}
-      className="relative h-[420px] w-full overflow-hidden rounded-3xl sm:h-[380px]"
+      className="relative h-[420px] w-full overflow-hidden rounded-3xl sm:h-[440px]"
       role="group"
       aria-label="Ways to reach me (you can also drag them around)"
     >

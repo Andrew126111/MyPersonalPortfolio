@@ -34,6 +34,7 @@
   --color-glow: var(--glow);
   --color-cream: var(--cream);
   --color-hero-ink: var(--hero-ink);
+  --color-soft: var(--soft);
   --color-sky-1: var(--sky-1);
   --color-sky-2: var(--sky-2);
   --color-sky-3: var(--sky-3);
@@ -62,6 +63,7 @@
   --subtle: #3a5371; /* decorative only, never text */
   --glow: #5ee0ff; /* icy cyan accent */
   --cream: #e1e0cc; /* warm off-white for buttons and headings */
+  --soft: #c3d0df; /* secondary text that sits on the sky (brighter than muted, for contrast) */
   --hero-ink: #fbf9ef; /* brighter warm white for the hero name, so it pops off the video */
 
   /* Sky + clouds. Cloud images are neutral grey; they're tinted from --cloud-light (lit

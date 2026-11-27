@@ -63,7 +63,7 @@ function RoleRow({ role, index }: { role: Role; index: number }) {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.7, ease: EASE }}
         >
-          <p className="font-mono text-xs text-muted-foreground">
+          <p className="font-mono text-xs text-soft">
             <span className="text-glow">{role.dates}</span>
             <span className="mx-2">·</span>
             <MapPin className="mr-1 inline size-3 -translate-y-px" aria-hidden="true" />
@@ -71,10 +71,10 @@ function RoleRow({ role, index }: { role: Role; index: number }) {
           </p>
           <h3 id={`role-${index}`} className="mt-3 text-3xl font-bold sm:text-4xl">
             {role.company}
-            {role.via && <span className="ml-2 text-lg font-medium text-muted-foreground">{role.via}</span>}
+            {role.via && <span className="ml-2 text-lg font-medium text-soft">{role.via}</span>}
           </h3>
           <p className="mt-1 text-lg text-cream/90">{role.title}</p>
-          <p className="mt-4 text-[17px] leading-relaxed text-muted-foreground">{role.summary}</p>
+          <p className="mt-4 text-[17px] leading-relaxed text-soft">{role.summary}</p>
 
           {/* stats: big plain numbers, no boxes */}
           <dl className="mt-7 grid grid-cols-3 gap-4 sm:flex sm:flex-wrap sm:gap-x-10 sm:gap-y-4">
@@ -84,7 +84,7 @@ function RoleRow({ role, index }: { role: Role; index: number }) {
                 <dd className="font-heading text-2xl font-bold whitespace-nowrap text-glow sm:text-4xl">
                   <CountUp to={s.value} prefix={s.prefix} suffix={s.suffix} />
                 </dd>
-                <dd className="mt-1 max-w-[16ch] text-xs leading-snug text-muted-foreground">{s.label}</dd>
+                <dd className="mt-1 max-w-[16ch] text-xs leading-snug text-soft">{s.label}</dd>
               </div>
             ))}
           </dl>
@@ -113,14 +113,14 @@ export function Experience() {
       ref={ref}
       id="experience"
       aria-labelledby="experience-title"
-      className="mx-auto w-full max-w-[1200px] scroll-mt-16 px-4 py-20 sm:px-6 sm:py-32"
+      className="mx-auto w-full max-w-[1200px] scroll-mt-16 px-4 py-20 [text-shadow:0_1px_10px_rgb(5_12_24/0.55)] sm:px-6 sm:py-32"
     >
       <SectionHeading
         id="experience-title"
         eyebrow="02 · Experience"
         title={
           <>
-            Where I&apos;ve shipped. <span className="text-muted-foreground">Scroll to watch it run.</span>
+            Where I&apos;ve shipped. <span className="text-soft/75">Scroll to watch it run.</span>
           </>
         }
       />

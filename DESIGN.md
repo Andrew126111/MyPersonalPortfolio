@@ -23,6 +23,8 @@ The single source of truth for how the portfolio looks and moves. Every section 
 | `--glow` | `#5EE0FF` | The one accent (icy cyan): CTAs, highlights, focus ring, active states | 12.3 ✅ |
 | `--cream` | `#E1E0CC` | Hero name and hero text over video | — |
 
+Secondary text that sits on the sky uses `--soft` (#c3d0df, ≥4.5:1 on the dusk sky) instead of `--muted-foreground`; an early-dusk sky layer fades in under the About statement and clouds are gone by Experience, so text never sits on a pale patch. Small labels are 12px minimum (except text drawn inside mock-ups). Tab icon: a handwritten "A" monogram from the signature (`app/icon.svg`, `apple-icon.png`, `favicon.ico`); link previews use `app/opengraph-image.tsx` (generated at build; set `site.url` at deploy).
+
 The hero background (`public/hero.webp`) is Andrew on a hilltop above the Toronto skyline at sunset: two photos composited (the clean skyline shot + Andrew cut out of a second shot, hair matted strand by strand), sharpened and lightly cooled. It's a sharp still; a slow CSS camera drift (`hero-drift`) keeps it alive. Accent used sparingly, never as a large fill.
 
 ## Typography

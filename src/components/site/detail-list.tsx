@@ -7,7 +7,7 @@ import { ChevronDown } from "lucide-react";
 
 function Point({ text }: { text: string }) {
   return (
-    <li className="flex gap-3 text-[15px] leading-relaxed text-muted-foreground">
+    <li className="flex gap-3 text-[15px] leading-relaxed text-soft">
       <span className="mt-2.5 size-1 shrink-0 rounded-full bg-glow" aria-hidden="true" />
       {text}
     </li>
@@ -42,7 +42,7 @@ export function PointList({ points, visible = 2 }: { points: string[]; visible?:
 
 export function ToolsLine({ tools, label = "Tools used" }: { tools: string[]; label?: string }) {
   return (
-    <p className="mt-6 font-mono text-[11px] leading-relaxed text-muted-foreground/80">
+    <p className="mt-6 font-mono text-xs leading-relaxed text-soft/80">
       <span className="sr-only">{label}: </span>
       {tools.join("  ·  ")}
     </p>

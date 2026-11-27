@@ -138,7 +138,7 @@ export function Intro() {
           animate={leaving ? { opacity: 0, y: 6 } : { opacity: 1, y: 0 }}
           transition={{ duration: leaving ? 0.25 : 0.8, delay: leaving ? 0 : 0.5 }}
         >
-          <p className="font-mono text-[10px] tracking-[0.28em] whitespace-nowrap text-white/70 uppercase sm:text-[11px]">Andrew Nguyen · Portfolio</p>
+          <p className="font-mono text-xs tracking-[0.26em] whitespace-nowrap text-white/75 uppercase">Andrew Nguyen · Portfolio</p>
           <span className="relative h-px w-full overflow-hidden bg-white/12">
             <motion.span
               className="absolute inset-y-0 left-0 bg-glow shadow-[0_0_8px_rgb(94_224_255/0.8)]"

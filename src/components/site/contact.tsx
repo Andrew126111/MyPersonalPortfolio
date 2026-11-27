@@ -75,7 +75,7 @@ export function Contact() {
 
         {/* sign-off: the journey ends like a letter, my signature written as you scroll in */}
         <div className="mx-auto w-full max-w-[460px]">
-          <p className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">Talk soon,</p>
+          <p className="font-mono text-xs tracking-[0.12em] text-muted-foreground uppercase">Talk soon,</p>
           <Signature
             progress={progress}
             className="mt-2 w-full text-cream drop-shadow-[0_0_18px_rgb(94_224_255/0.3)]"
@@ -84,8 +84,8 @@ export function Contact() {
       </div>
 
       {/* the playground: contact pills that fall from the sky; grab, toss, or click them */}
-      <div className="relative mx-auto mt-16 w-full max-w-[1200px] sm:mt-20">
-        <p className="mb-3 text-center font-mono text-[11px] tracking-[0.14em] text-muted-foreground uppercase">
+      <div className="relative mx-auto mt-16 w-full max-w-[820px] sm:mt-20">
+        <p className="mb-3 text-center font-mono text-xs tracking-[0.14em] text-soft/80 uppercase">
           Grab one, toss it, or click to reach out
         </p>
         <ContactPills onMessage={() => form.current?.open()} />

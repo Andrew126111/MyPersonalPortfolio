@@ -37,9 +37,9 @@ const N = LIFE.length;
 // Scroll budget. MORPH and TRAVEL are fractions of the *arc* part of the scroll.
 const MORPH = [0.04, 0.24] as const; // circle → arc
 const TRAVEL = [0.3, 0.94] as const; // slide through photos
-const VH_PER_PHOTO = 22; // scroll distance per photo, in svh
+const VH_PER_PHOTO = 14; // scroll distance per photo, in svh (kept short so recruiters reach the work fast)
 const ARC_SCROLL = ((N - 1) * VH_PER_PHOTO) / (TRAVEL[1] - TRAVEL[0]); // svh
-const TUNNEL_SCROLL = 170; // svh of scrolling to fly through the tunnel
+const TUNNEL_SCROLL = 110; // svh of scrolling to fly through the tunnel
 const T = TUNNEL_SCROLL / (TUNNEL_SCROLL + ARC_SCROLL); // tunnel's share of total progress
 // Tunnel progress at which the photos start forming the circle (and below which they reset).
 const CIRCLE_IN = 0.86;
@@ -268,7 +268,7 @@ function LifeArc() {
           <p className="max-w-[9ch] font-heading text-xl leading-tight font-bold sm:max-w-none sm:text-3xl">
             Life outside the terminal
           </p>
-          <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+          <p className="mt-3 font-mono text-xs uppercase tracking-[0.2em] text-soft">
             Scroll to explore
           </p>
         </div>
@@ -338,7 +338,7 @@ function LifeArc() {
                 transition={{ duration: 0.25, ease: "easeOut" }}
                 className="max-w-[44ch]"
               >
-                <p className="font-mono text-[11px] tracking-[0.12em] text-glow">
+                <p className="font-mono text-xs tracking-[0.12em] text-glow">
                   {String(active + 1).padStart(2, "0")} / {String(N).padStart(2, "0")}
                 </p>
                 <p className="mt-2 font-heading text-xl font-bold sm:text-2xl">

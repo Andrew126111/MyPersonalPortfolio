@@ -146,6 +146,7 @@ export function Sky() {
   const experience = useSectionRef("experience");
   const projects = useSectionRef("projects");
   const contact = useSectionRef("contact");
+  const aboutMore = useSectionRef("about-more"); // the statement after the photo gallery
 
   // About: clouds rise into place, then drift up slowly through the section.
   const { scrollYProgress: rise } = useScroll({ target: about, offset: ["start end", "start start"] });
@@ -158,16 +159,18 @@ export function Sky() {
   const { scrollYProgress: expIn } = useScroll(enter(experience));
   const { scrollYProgress: projIn } = useScroll(enter(projects));
   const { scrollYProgress: contactIn } = useScroll(enter(contact));
+  // Dusk starts as the About statement scrolls in, so text never sits on the palest sky.
+  const { scrollYProgress: duskIn } = useScroll({ target: aboutMore, offset: ["start end", "start 0.35"] });
 
   // Parallax: each cloud layer starts lower and lifts into place, then drifts up slowly.
   const farY = useLayerY(rise, drift, reduce, 14, 10);
   const midY = useLayerY(rise, drift, reduce, 28, 22);
   const fogY = useLayerY(rise, drift, reduce, 46, 36);
 
-  // Clouds and fog thin out as you descend into Experience (a few far wisps remain).
-  // (a few far wisps stay through Experience, then they're gone by night)
-  const cloudsOpacity = useTransform([expIn, projIn], ([e, p]: number[]) => (1 - e * 0.85) * (1 - p));
-  const fogOpacity = useTransform(expIn, [0, 0.8], [1, 0]);
+  // Clouds thin out under the About statement and are gone by Experience, so text never sits
+  // on a bright wisp; the fog fades as the statement scrolls in.
+  const cloudsOpacity = useTransform([duskIn, expIn, projIn], ([d, e, p]: number[]) => (1 - Math.max(d * 0.7, e)) * (1 - p));
+  const fogOpacity = useTransform([duskIn, expIn], ([d, e]: number[]) => Math.min(1 - d, 1 - Math.min(1, e / 0.8)));
   const starsOpacity = useTransform([projIn, contactIn], ([p, c]: number[]) => p * 0.45 + c * 0.55);
 
   return (
@@ -177,6 +180,11 @@ export function Sky() {
     >
       {/* skies, crossfading from blue hour into night */}
       <div className="absolute inset-0" style={{ backgroundImage: "var(--sky-gradient)" }} />
+      {/* early dusk under the About statement (keeps text readable before Experience) */}
+      <motion.div
+        style={{ opacity: duskIn }}
+        className="absolute inset-0 bg-[linear-gradient(to_bottom,#0a2140_0%,#14375c_55%,#21507c_100%)]"
+      />
       <motion.div
         style={{ opacity: expIn }}
         className="absolute inset-0 bg-[linear-gradient(to_bottom,#081a31_0%,#0f2c4d_50%,#1d4a73_100%)]"

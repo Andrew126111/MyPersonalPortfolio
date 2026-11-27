@@ -7,6 +7,9 @@ export const site = {
   // Footer copyright year (static, so the page can be prerendered).
   year: 2026,
   school: "Queen's University",
+  // The live website address. Set this when you deploy (e.g. "https://andrewnguyen.dev"):
+  // link previews (LinkedIn, iMessage) need it to find the preview image.
+  url: "",
   // Hero background: me on a hilltop above the Toronto skyline at sunset. Two photos
   // composited (clean skyline shot + me cut out of a second one, hair matted by hand),
   // sharpened, lightly graded. A still (sharp, ~480 KB); the hero adds a slow camera drift.

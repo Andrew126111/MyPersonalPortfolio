@@ -169,7 +169,7 @@ export function About() {
       {/* Tunnel fly-through → photo circle → arc. Its title is this section's heading. */}
       <LifeGallery />
 
-      <div className="mx-auto mt-20 w-full max-w-[1100px] px-5 sm:mt-28 sm:px-6">
+      <div id="about-more" className="mx-auto mt-20 w-full max-w-[1100px] px-5 [text-shadow:0_1px_12px_rgb(5_12_24/0.5)] sm:mt-28 sm:px-6">
         <p className="mb-6 font-mono text-xs tracking-[0.12em] text-glow uppercase">A bit more about me</p>
         <ScrollLitStatement />
         <div className="mt-10 sm:mt-12">

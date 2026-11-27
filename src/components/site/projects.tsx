@@ -32,13 +32,13 @@ function ProjectRow({ project, index }: { project: Project; index: number }) {
       </TiltCard>
 
       <div className={cn(flip && "lg:order-1")}>
-        <p className="font-mono text-xs text-muted-foreground">
+        <p className="font-mono text-xs text-soft">
           <span className="text-glow">{project.date}</span>
         </p>
         <h3 id={`project-${index}`} className="mt-3 text-3xl font-bold sm:text-4xl">
           {project.name}
         </h3>
-        <p className="mt-4 text-[17px] leading-relaxed text-muted-foreground">{project.tagline}</p>
+        <p className="mt-4 text-[17px] leading-relaxed text-soft">{project.tagline}</p>
 
         <PointList points={project.points} />
         <ToolsLine tools={project.stack} label="Built with" />
@@ -84,7 +84,7 @@ export function Projects() {
         eyebrow="03 · Projects"
         title={
           <>
-            Things I&apos;ve built. <span className="text-muted-foreground">Hover to look around.</span>
+            Things I&apos;ve built. <span className="text-soft/75">Hover to look around.</span>
           </>
         }
       />

@@ -251,7 +251,7 @@ export function PipelineVisual({ progress }: { progress: MotionValue<number> }) 
             />
             <span
               className={cn(
-                "absolute top-5 flex items-center gap-1 font-mono text-[10px] whitespace-nowrap transition-colors duration-500 sm:text-[11px]",
+                "absolute top-5 flex items-center gap-1 font-mono text-[11px] whitespace-nowrap transition-colors duration-500 sm:text-xs",
                 on ? "text-foreground" : "text-muted-foreground/70",
               )}
             >

@@ -20,10 +20,20 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
+const description = "Computing (AI) student at Queen's University building full-stack AI products.";
+
 export const metadata: Metadata = {
+  // Until site.url is set (at deploy), previews resolve against localhost.
+  metadataBase: new URL(site.url || "http://localhost:3000"),
   title: `${site.name} — ${site.role}`,
-  description:
-    "Computing (AI) student at Queen's University building full-stack AI products.",
+  description,
+  openGraph: {
+    type: "website",
+    title: `${site.name} — ${site.role}`,
+    description,
+    siteName: site.name,
+  },
+  twitter: { card: "summary_large_image", title: `${site.name} — ${site.role}`, description },
 };
 
 // Runs before first paint: decides whether the opening intro plays (first visit in this session,
